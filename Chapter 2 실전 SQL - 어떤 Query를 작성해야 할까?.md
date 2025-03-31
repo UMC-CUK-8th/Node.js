@@ -10,7 +10,7 @@
 
     <지난 주 ERD>
     
-   ![Uploading erd.png…]()
+    ![erd](https://github.com/user-attachments/assets/71d97bce-c897-4074-a417-b2d806086492)
 
     > 지난 주 미션 당시 user_region 테이블을 따로 설계하였으나, 이미 만들어져 있는 테이블을 활용하는 방식을 추천한다는 피드백을 받았다. 이를 참고하여 ERD를 재구성, 재구성한 ERD를 바탕으로 쿼리를 작성하였다.
     > 
