@@ -43,7 +43,8 @@
     
     <지난 주 ERD>
     
-    ![alt text](<Chapter 1_mission_feedback-1.png>)
+    ![image](https://github.com/user-attachments/assets/f1460c15-5a78-41f2-bbee-fa11442cf6d1)
+
     
     > 지난 주 미션 당시 user_region 테이블을 따로 설계하였으나, 이미 만들어져 있는 테이블을 활용하는 방식을 추천한다는 피드백을 받았다. 이를 참고하여 ERD를 재구성, 재구성한 ERD를 바탕으로 쿼리를 작성하였다.
     > 
