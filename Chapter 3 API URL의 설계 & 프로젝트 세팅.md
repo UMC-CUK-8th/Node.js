@@ -218,7 +218,7 @@ https://www.notion.so/makeus-challenge/Chapter-3-API-URL-1b7b57f4596b80beb693cd4
     
     필요 없다.
     
-    1. ***리뷰 작성 → 별점 설정 및 리뷰 내용 작성, 이미지 첨부***
+    3. ***리뷰 작성 → 별점 설정 및 리뷰 내용 작성, 이미지 첨부***
     
     **API Endpoint**
     
@@ -271,7 +271,7 @@ https://www.notion.so/makeus-challenge/Chapter-3-API-URL-1b7b57f4596b80beb693cd4
     
     필요 없다.
     
-    1. ***미션 목록 조회 -> 진행 중, 진행 완료인 미션 목록 조회***
+    4. ***미션 목록 조회 -> 진행 중, 진행 완료인 미션 목록 조회***
     
     **API Endpoint**
     
@@ -308,7 +308,7 @@ https://www.notion.so/makeus-challenge/Chapter-3-API-URL-1b7b57f4596b80beb693cd4
     
     `in_progress`, `completed`
     
-    1. ***미션 성공 누르기***
+    5. ***미션 성공 누르기***
     
     **API Endpoint**
     
@@ -340,7 +340,7 @@ https://www.notion.so/makeus-challenge/Chapter-3-API-URL-1b7b57f4596b80beb693cd4
     **Query String**
     필요 없다.
     
-    1. ***회원 가입하기***
+    6. ***회원 가입하기***
     
     **API Endpoint**
     
