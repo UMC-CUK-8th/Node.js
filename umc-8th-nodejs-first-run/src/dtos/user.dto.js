@@ -15,19 +15,14 @@ export const bodyToUser = (body) => {
   };
   
   export const responseFromUser = ({ user, preferences }) => {
+    const preferFoods = preferences.map(
+      (preference) => preference.preference.name
+    );
+
     return {
-      id: user.id,
       email: user.email,
       name: user.name,
-      nickname: user.nickname,
-      gender: user.gender,
-      birth: user.birth,
-      address: user.address,
-      phone_number: user.phone_number, // camelCase 스타일 유지
-      preferences: preferences.map((preference) => ({
-        id: preference.id,
-        name: preference.preference_name,
-      })),
+      preferCategoty: preferFoods,
     };
   };
   
