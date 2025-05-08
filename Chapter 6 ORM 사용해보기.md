@@ -146,7 +146,8 @@
 ## ☑️ 실습 인증
 - ORM 사용해보기 - 회원가입
     
-    ![image.png](Chapter%206%20ORM%20%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%87%E1%85%A9%E1%84%80%E1%85%B5%201e7b57f4596b8047889aed6421458a55/image.png)
+    <img width="766" alt="ORM 회원가입 오류" src="https://github.com/user-attachments/assets/2a129625-dcfd-4ff0-afed-ec6dfe532da1" />
+
     
     > `schema.prisma`의 model에 `inactive_date`를 명시하였는데도 찾지 못한다는 오류가 발생함.
     > 
