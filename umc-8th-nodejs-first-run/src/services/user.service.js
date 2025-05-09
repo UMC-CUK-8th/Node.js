@@ -18,12 +18,17 @@ export const userSignUp = async (data) => {
     throw new Error("이미 존재하는 이메일입니다.");
   }
 
-  for (const preference of data.preferences) { 
-    await setPreference(userId, preference);
-  }
+  // 🟢 사용자의 선호도를 저장 (UserPreference에 추가)
+  await prisma.userPreference.createMany({
+    data: data.preferences.map(preferenceId => ({
+      userId,
+      preferenceId,
+    })),
+  });
 
   const user = await getUser(userId); 
   const preferences = await getUserPreferencesByUserId(userId);
 
   return responseFromUser({ user, preferences });
 };
+

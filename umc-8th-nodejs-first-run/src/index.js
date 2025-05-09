@@ -8,6 +8,7 @@ import { addReviewImage } from "./controllers/reviewimage.controller.js";
 import { createMission } from "./controllers/mission.controller.js";
 import { getUserMissions } from "./controllers/usermission.controller.js";
 import { addUserMission } from "./controllers/usermission.controller.js";
+import { prisma, pool } from "./db.config.js";
 
 dotenv.config();
 
@@ -33,10 +34,16 @@ app.post("/api/v1/review/:store_id/:user_id", addReview);
 app.post("/api/v1/images/review/:review_id", addReviewImage);
 // 가게에 미션 추가 API
 app.post("/api/v1/mission/:store_id", createMission);
-// 도전 중 미션 확인
+// 도전 중 미션 확인 - 커서 페이지네이션
 app.get("/api/v1/user/:user_id/missions", getUserMissions);
 // 도전 중 미션 추가
 app.post("/api/v1/user-mission/:user_id", addUserMission);
+// 리뷰 목록 조회
+app.get("/api/v1/stores/:store_id/reviews", handleListStoreReviews);
+// 내가 작성한 리뷰 목록 조회
+// app.get("/api/v1/reviews/:user_id/own",)
+
+
 
 
 app.listen(port, () => {
