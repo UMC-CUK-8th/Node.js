@@ -10,7 +10,7 @@ export const pool = mysql.createPool({
   user: process.env.DB_USER || "root",
   port: process.env.DB_PORT || 3306,
   database: process.env.DB_NAME || "umc-8th-work1",
-  password: process.env.DB_PASSWORD || "m72836996",
+  password: process.env.DB_PASSWORD,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0,
