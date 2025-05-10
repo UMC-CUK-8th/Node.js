@@ -8,8 +8,12 @@ export const bodyToUser = (body) => {
       address: body.address || "",
       phone_number: body.phone_number, // camelCase 스타일 유지
       is_agreed: body.is_agreed,
+      sns_provider: body.sns_provider,
       sns_id: body.sns_id,
+      status: body.status,
       profile_image_url: body.profile_image_url || "",
+      is_phone_verified: body.is_phone_verified,
+      user_point: body.user_point,
       preferences: body.preference || [], // preference → preferences (배열 형태)
     };
   };

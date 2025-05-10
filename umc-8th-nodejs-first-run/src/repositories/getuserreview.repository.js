@@ -1,18 +1,23 @@
-import { prisma } from "../db.config.js"; 
+import { prisma } from "../db.config.js";
 
-export const getAllStoreReviews = async (storeId, cursor = 0) => {
+export const findUserReviewsRepository = async (userId, cursor = 0) => {
     try {
         const reviews = await prisma.review.findMany({
+            where: {
+                user_id: userId,
+                review_id: { gt: cursor },
+            },
             select: {
                 review_id: true,
                 review_content: true,
                 reply: true,
+                rating: true,
                 created_at: true,
                 updated_at: true,
-                user: {
+                reviewimages: {
                     select: {
-                        user_id: true,
-                        nickname: true,
+                        reviewimage_id: true,
+                        image_url: true,
                     },
                 },
                 store: {
@@ -21,17 +26,20 @@ export const getAllStoreReviews = async (storeId, cursor = 0) => {
                         store_name: true,
                     },
                 },
-            },
-            where: {
-                store_id: storeId,
-                review_id: { gt: cursor },
+                user: { 
+                    select: {
+                        nickname: true,
+                    },
+                },
             },
             orderBy: { review_id: "asc" },
             take: 5,
         });
 
-        console.log(`${storeId}의 리뷰 목록 조회 완료 (cursor: ${cursor})`);
-        return reviews;
+        // 다음 커서 값 설정 (마지막 리뷰 ID)
+        const nextCursor = reviews.length > 0 ? reviews[reviews.length - 1].review_id : null;
+
+        return { reviews, nextCursor };
     } catch (error) {
         console.error("리뷰 목록 조회 중 오류 발생:", error);
         throw new Error("리뷰 목록을 가져오는 중 문제가 발생했습니다.");
