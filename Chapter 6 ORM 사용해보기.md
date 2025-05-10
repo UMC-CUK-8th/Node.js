@@ -148,9 +148,11 @@
 > 
 - ORM 사용해보기 - 회원가입
     
-    ![image.png](Chapter%206%20ORM%20%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%87%E1%85%A9%E1%84%80%E1%85%B5%201e7b57f4596b8047889aed6421458a55/image.png)
+    <img width="1023" alt="회원가입" src="https://github.com/user-attachments/assets/23dc089a-5570-49a0-9970-ad375d16b198" />
+
     
-    ![image.png](Chapter%206%20ORM%20%E1%84%89%E1%85%A1%E1%84%8B%E1%85%AD%E1%86%BC%E1%84%92%E1%85%A2%E1%84%87%E1%85%A9%E1%84%80%E1%85%B5%201e7b57f4596b8047889aed6421458a55/image%201.png)
+    <img width="1000" alt="DB" src="https://github.com/user-attachments/assets/29ad8e5e-8be2-4357-9c0a-a2e99b418725" />
+
     
     → postman에서 body를 입력하고 실행을 하면 DB에 데이터가 잘 삽입되는 걸 볼 수 있다.
     
