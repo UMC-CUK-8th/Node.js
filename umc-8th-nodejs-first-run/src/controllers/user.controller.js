@@ -4,13 +4,9 @@ import { userSignUp } from "../services/user.service.js";
 
 export const handleUserSignUp = async (req, res, next) => {
   console.log("회원가입을 요청했습니다!");
-  console.log("body:", req.body);
+  console.log("body:", req.body); //값이 잘 들어왔는지 확인
 
-  try {
     const user = await userSignUp(bodyToUser(req.body));
-    res.status(StatusCodes.CREATED).json({ result: user });
-  } catch (error) {
-    console.error("회원가입 처리 중 오류:", error);
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: error.message });
-  }
+
+    res.status(StatusCodes.OK).success(user);
 };
