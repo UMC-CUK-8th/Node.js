@@ -247,12 +247,14 @@
         > `mission.controller.js`  파일에 가게 존재 여부를 확인하는 함수 `checkStoreExists` 호출, 에러가 발생한 경우 `next`를 통해 미들웨어로 전달.
         > 
         
-        
+        <img width="453" alt="가게 미션 추가 성공" src="https://github.com/user-attachments/assets/0fd5a667-bc28-4a91-83d8-3642b157d44e" />
+
         
         > postman 성공 화면
         > 
         
-        
+        <img width="348" alt="가게 미션 추가 x" src="https://github.com/user-attachments/assets/d8cae116-6c2a-4144-8189-b80ff50ce1dd" />
+
         
         > postman 실패 화면
         > 
