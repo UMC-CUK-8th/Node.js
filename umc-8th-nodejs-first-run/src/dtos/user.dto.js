@@ -8,26 +8,25 @@ export const bodyToUser = (body) => {
       address: body.address || "",
       phone_number: body.phone_number, // camelCase 스타일 유지
       is_agreed: body.is_agreed,
+      sns_provider: body.sns_provider,
       sns_id: body.sns_id,
+      status: body.status,
       profile_image_url: body.profile_image_url || "",
+      is_phone_verified: body.is_phone_verified,
+      user_point: body.user_point,
       preferences: body.preference || [], // preference → preferences (배열 형태)
     };
   };
   
   export const responseFromUser = ({ user, preferences }) => {
+    const preferFoods = preferences.map(
+      (preference) => preference.preference.name
+    );
+
     return {
-      id: user.id,
       email: user.email,
       name: user.name,
-      nickname: user.nickname,
-      gender: user.gender,
-      birth: user.birth,
-      address: user.address,
-      phone_number: user.phone_number, // camelCase 스타일 유지
-      preferences: preferences.map((preference) => ({
-        id: preference.id,
-        name: preference.preference_name,
-      })),
+      preferCategoty: preferFoods,
     };
   };
   

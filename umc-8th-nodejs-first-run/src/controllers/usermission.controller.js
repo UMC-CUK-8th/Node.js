@@ -1,18 +1,22 @@
 import { StatusCodes } from "http-status-codes";
-import { createUserMissionDTO } from "../dtos/usermission.dto.js";
-import { addUserMissionService, getUserMissionsService } from "../services/usermission.service.js";
+import { getUserMissionsService } from "../services/usermission.service.js";
+import { completeUserMissionService } from "../services/usermission.service.js";
 
-// ✅ 특정 사용자의 진행 중인 미션 조회
 export const getUserMissions = async (req, res) => {
   try {
     const user_id = Number(req.params.user_id);
-    console.log("🔹 받은 user_id:", user_id);
+    const cursor = req.query.cursor ? Number(req.query.cursor) : null; // 커서 값
+    const limit = req.query.limit ? Number(req.query.limit) : 10; // 10개 조회
 
-    const userMissions = await getUserMissionsService(user_id);
+    console.log("받은 user_id:", user_id);
+    console.log("받은 cursor:", cursor);
+    console.log("받은 limit:", limit);
+
+    const userMissionsData = await getUserMissionsService(user_id, cursor, limit);
 
     res.status(StatusCodes.OK).json({
       message: "User missions retrieved successfully",
-      missions: userMissions,
+      data: userMissionsData,
     });
   } catch (error) {
     res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR).json({
@@ -21,10 +25,10 @@ export const getUserMissions = async (req, res) => {
   }
 };
 
-// ✅ 사용자가 새로운 미션에 도전 (`in_progress` 상태로 추가)
+// 사용자가 새로운 미션에 도전 (`in_progress` 상태로 추가)
 export const addUserMission = async (req, res) => {
   try {
-    const user_id = Number(req.params.user_id); // ✅ URL에서 user_id 가져오기
+    const user_id = Number(req.params.user_id); // URL에서 user_id 가져오기
     console.log("🔹 받은 user_id:", user_id);
 
     const userMissionData = createUserMissionDTO(req.body, user_id); // DTO 검증 및 변환
@@ -35,6 +39,28 @@ export const addUserMission = async (req, res) => {
     res.status(StatusCodes.CREATED).json({
       message: "User mission started successfully",
       userMission: newUserMission,
+    });
+  } catch (error) {
+    res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR).json({
+      error: error.message || "Internal Server Error",
+    });
+  }
+};
+
+// 미션 상태를 완료로 업데이트
+export const completeUserMission = async (req, res) => {
+  try {
+    const user_id = Number(req.params.user_id);
+    const mission_id = Number(req.params.mission_id);
+
+    console.log("🔹 완료할 user_id:", user_id);
+    console.log("🔹 완료할 mission_id:", mission_id);
+
+    const updatedMission = await completeUserMissionService(user_id, mission_id);
+
+    res.status(StatusCodes.OK).json({
+      message: "User mission completed successfully",
+      updatedMission,
     });
   } catch (error) {
     res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR).json({

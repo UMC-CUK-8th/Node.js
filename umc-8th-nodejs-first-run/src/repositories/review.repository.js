@@ -1,30 +1,33 @@
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js"; 
 
+// 가게 조회 (storeId 기반 조회)
 export const findStoreByIdRepository = async (storeId) => {
-  const [rows] = await pool.query("SELECT * FROM Store WHERE store_id = ?", [storeId]);
-  return rows.length > 0 ? rows[0] : null;
+  return await prisma.store.findUnique({
+    where: { store_id: storeId },
+  });
 };
 
+// 사용자 조회 (userId 기반 조회)
 export const findUserByIdRepository = async (userId) => {
-  const [rows] = await pool.query("SELECT * FROM user WHERE user_id = ?", [userId]);
-  return rows.length > 0 ? rows[0] : null;
+  return await prisma.user.findUnique({
+    where: { user_id: userId }, 
+  });
 };
 
+// 리뷰 추가
 export const addReviewRepository = async (storeId, userId, reviewData) => {
-  const [result] = await pool.query(
-    `INSERT INTO Review (store_id, user_id, rating, review_content, created_at, updated_at)
-     VALUES (?, ?, ?, ?, NOW(), NOW())`,
-    [storeId, userId, reviewData.rating, reviewData.review_content]
-  );
+  const createdReview = await prisma.review.create({
+    data: {
+      store_id: storeId,
+      user_id: userId,
+      rating: reviewData.rating,
+      review_content: reviewData.review_content,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  });
 
-  console.log("✅ 리뷰 저장 완료!", result.insertId);
+  console.log("리뷰 저장 완료!", createdReview.review_id);
 
-  return {
-    review_id: result.insertId,
-    store_id: storeId,
-    user_id: userId,
-    ...reviewData,
-    created_at: new Date(),
-    updated_at: new Date(),
-  };
+  return createdReview;
 };

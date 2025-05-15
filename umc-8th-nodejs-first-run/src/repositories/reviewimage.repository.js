@@ -1,28 +1,36 @@
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js";
 
+// 리뷰 조회 (reviewId 기반 조회)
 export const findReviewByIdRepository = async (reviewId) => {
-  const [rows] = await pool.query(
-    "SELECT review_id, rating, review_content FROM Review WHERE review_id = ?",
-    [reviewId]
-  );
-  return rows.length > 0 ? rows[0] : null; // ✅ 리뷰 존재 여부 확인
+  return await prisma.review.findUnique({
+    where: { review_id: reviewId },
+    select: {
+      review_id: true,
+      rating: true,
+      review_content: true,
+    },
+  });
 };
 
+// 리뷰 이미지 추가
 export const addReviewImageRepository = async (review, reviewImageData) => {
   const { review_id, rating, review_content } = review;
 
-  console.log("🔹 addReviewImageRepository - review_id:", review_id); // ✅ 이 줄 추가
+  console.log("🔹 addReviewImageRepository - review_id:", review_id);
 
-  const [result] = await pool.query(
-    `INSERT INTO Review_image (review_id, image_url, created_at, updated_at) 
-     VALUES (?, ?, NOW(), NOW())`,
-    [review_id, reviewImageData.image_url]
-  );
+  const createdReviewImage = await prisma.reviewImage.create({
+    data: {
+      review_id,
+      image_url: reviewImageData.image_url,
+      created_at: new Date(),
+      updated_at: new Date(),
+    },
+  });
 
-  console.log("✅ 리뷰 이미지 저장 완료!", result.insertId);
+  console.log("리뷰 이미지 저장 완료!", createdReviewImage.review_image_id);
 
   return {
-    review_image_id: result.insertId,
+    review_image_id: createdReviewImage.review_image_id,
     review_id,
     rating,
     review_content,
@@ -31,4 +39,3 @@ export const addReviewImageRepository = async (review, reviewImageData) => {
     updated_at: new Date(),
   };
 };
-

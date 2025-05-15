@@ -1,56 +1,53 @@
-import { pool } from "../db.config.js";
+import { prisma } from "../db.config.js";
 
+// 이메일로 사용자 조회
 export const findUserByEmail = async (email) => {
-  const [rows] = await pool.query("SELECT * FROM user WHERE email = ?", [email]);
-  return rows[0] || null;
+  return await prisma.user.findUnique({
+    where: { email },
+  });
 };
 
-export const addUser = async (userData) => {
-  try {
-    const [result] = await pool.query(
-      `INSERT INTO user (email, name, nickname, gender, birth, address, phone_number, sns_id, profile_image_url, created_at, updated_at) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
-      [
-        userData.email,
-        userData.name,
-        userData.nickname,
-        userData.gender,
-        userData.birth,
-        userData.address,
-        userData.phone_number, 
-        userData.sns_id, 
-        userData.profile_image_url 
-      ]
-    );
+// 사용자 추가 (중복 이메일 방지)
+export const addUser = async (data) => {
+  const existingUser = await prisma.user.findUnique({
+    where: { email: data.email },
+  });
 
-    return result.insertId;
-  } catch (error) {
-    if (error.code === "ER_DUP_ENTRY") {
-      return null;
-    }
-    throw new Error(`회원가입 중 오류 발생: ${error.message}`);
+  if (existingUser) {
+    return null; // 이미 존재하는 이메일
   }
+
+  const createdUser = await prisma.user.create({ data });
+  return createdUser.id;
 };
 
-export const getUser = async (userId) => { 
-  const [rows] = await pool.query("SELECT * FROM user WHERE user_id = ?", [userId]); 
-  return rows[0] || null;
+// 사용자 정보 조회
+export const getUser = async (userId) => {
+  return await prisma.user.findUniqueOrThrow({
+    where: { id: userId },
+  });
 };
 
-export const getUserPreferencesByUserId = async (userId) => { 
-  const [rows] = await pool.query(
-    `SELECT p.preference_id, p.preference_name 
-     FROM user_preference up 
-     JOIN preference p ON up.preference_id = p.preference_id 
-     WHERE up.user_id = ?`,
-    [userId] // 수정된 변수명 반영
-  );
-  return rows;
+// 사용자 선호 설정
+export const setPreference = async (userId, preferenceId) => {
+  await prisma.userPreference.create({
+    data: {
+      userId,
+      preferenceId,
+    },
+  });
 };
 
-export const setPreference = async (userId, preferenceId) => { 
-  await pool.query(
-    `INSERT INTO user_preference (user_id, preference_id) VALUES (?, ?)`,
-    [userId, preferenceId]
-  );
+// 특정 사용자 선호도 조회
+export const getUserPreferencesByUserId = async (userId) => {
+  return await prisma.userPreference.findMany({
+    select: {
+      id: true,
+      userId: true,
+      preferenceId: true,
+      preference: true,
+    },
+    where: { userId },
+    orderBy: { preferenceId: "asc" },
+  });
 };
