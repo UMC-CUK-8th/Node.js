@@ -1,16 +1,17 @@
 import { responseFromUser } from "../dtos/user.dto.js";
 import { prisma } from "../db.config.js";
 import { addUser, getUser, getUserPreferencesByUserId, setPreference } from "../repositories/user.repository.js";
+import { DuplicateUserEmailError } from "../errors.js";
 
 //회원가입
 export const userSignUp = async (data) => {
-  // 이메일 중복 체크
+  // 이메일 중복 확인
   const existingUser = await prisma.user.findUnique({
-    where: { email: data.email },
+    where: { email: data.email }
   });
 
   if (existingUser) {
-    throw new Error("이미 존재하는 이메일입니다.");
+    throw new DuplicateUserEmailError("이미 존재하는 이메일입니다.", data);
   }
 
   // prisma 사용, 회원 정보 저장
@@ -31,7 +32,7 @@ export const userSignUp = async (data) => {
       is_phone_verified: data.is_phone_verified,
     },
   });
-
+  
   // 사용자의 선호도 저장, UserPreference에 추가
   if (data.preferences && data.preferences.length > 0) {
     await prisma.userPreference.createMany({

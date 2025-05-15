@@ -22,6 +22,23 @@ app.use(express.static("public")); // 정적 파일 접근
 app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
 
+//공통 응답을 사용할 수 있는 헬퍼 함수 등록
+app.use((req, res, next) => {
+  res.success = (success) => {
+    return res.json({resultType: "SUCCESS", error: null, success});
+  };
+
+  res.error = ({errorCode = "unknown", reason = null, data = null}) => {
+    return res.json({
+      resultType: "FAIL",
+      error: {errorCode, reason, data},
+      success: null,
+    });
+  };
+
+  next();
+});
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -49,9 +66,18 @@ app.get("/api/v1/stores/:store_id/missions", handleListMissions)
 // 나의 진행 중 미션을 진행 완료로 바꾸기 
 app.put("/api/v1/update/:user_id/:mission_id/user-mission", completeUserMission)
 
+// 전역 오류를 처리하기 위한 미들웨어
+app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err);
+  }
 
-
-
+  res.status(err.statusCode || 500).error({
+    errorCode: err.errorCode || "unknown",
+    reason: err.reason || err.message || null,
+    data: err.data || null,
+  });
+});
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);

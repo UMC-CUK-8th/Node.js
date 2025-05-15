@@ -1,4 +1,6 @@
 import { listUserReviewsService } from "../services/getuserreview.service.js";
+import { checkUserExists } from "../services/getuserreview.service.js";
+import { StatusCodes } from "http-status-codes";
 
 export const handleListUserReviews = async (req, res, next) => {
     try {
@@ -13,10 +15,17 @@ export const handleListUserReviews = async (req, res, next) => {
 
         const reviews = await listUserReviewsService(userId, cursor);
 
-        res.status(200).json({
-            message: "내가 작성한 리뷰 목록 조회 성공",
-            data: reviews,
-        });
+        // 사용자가 존재하는지 확인
+        try {
+            const user = await checkUserExists(userId);
+            res.status(StatusCodes.OK).success({
+                message: "내가 작성한 리뷰 목록 조회 성공",
+                data: reviews,
+            });
+        } catch (error) {
+            return next(error);
+        }
+
     } catch (error) {
         console.error("리뷰 목록 조회 오류:", error);
         res.status(500).json({ message: "리뷰 목록 조회 실패", error: error.message });
