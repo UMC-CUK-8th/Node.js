@@ -73,7 +73,8 @@
 
 1. 회원 가입 시 에러 처리하기 - API 응답 통일
     
-    ![API 응답 통일 - 회원가입.png](Chapter%207%20Express%20%E1%84%86%E1%85%B5%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20&%20API%20%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8%20%E1%84%90%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5%E1%86%AF%20&%20%201efb57f4596b8064949efe25215e0946/API_%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8_%E1%84%90%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5%E1%86%AF_-_%E1%84%92%E1%85%AC%E1%84%8B%E1%85%AF%E1%86%AB%E1%84%80%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%B8.png)
+    <img width="691" alt="API 응답 통일 - 회원가입" src="https://github.com/user-attachments/assets/b9b62979-f421-4e7a-8c26-fc8a88e88664" />
+
     
     ```jsx
     // 이메일 중복 확인
@@ -138,12 +139,14 @@
         > `getmission.controller.js`  파일에 가게 존재 여부를 확인하는 함수 `checkStoreExists` 호출, 에러가 발생한 경우 `next`를 통해 미들웨어로 전달.
         > 
         
-        ![image.png](Chapter%207%20Express%20%E1%84%86%E1%85%B5%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20&%20API%20%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8%20%E1%84%90%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5%E1%86%AF%20&%20%201efb57f4596b8064949efe25215e0946/image.png)
+        <img width="576" alt="가게 미션 조회 성공" src="https://github.com/user-attachments/assets/7013a001-6333-4e90-bcac-6acdb28354ee" />
+
         
         > postman 성공 응답
         > 
         
-        ![image.png](Chapter%207%20Express%20%E1%84%86%E1%85%B5%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20&%20API%20%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8%20%E1%84%90%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5%E1%86%AF%20&%20%201efb57f4596b8064949efe25215e0946/image%201.png)
+        <img width="357" alt="가게 존재 x" src="https://github.com/user-attachments/assets/fac809a0-47f8-4f17-8c6c-18f01917655b" />
+
         
         > postman 실패 응답
         > 
@@ -190,12 +193,14 @@
         > `getreview.controller.js`  파일에 가게 존재 여부를 확인하는 함수 `checkStoreExists` 호출, 에러가 발생한 경우 `next`를 통해 미들웨어로 전달.
         > 
         
-        ![image.png](Chapter%207%20Express%20%E1%84%86%E1%85%B5%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20&%20API%20%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8%20%E1%84%90%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5%E1%86%AF%20&%20%201efb57f4596b8064949efe25215e0946/image%202.png)
+        <img width="648" alt="가게 리뷰 조회 성공" src="https://github.com/user-attachments/assets/f13f102e-73a4-422f-a26f-786d5877f5d4" />
+
         
         > postman 성공 응답
         > 
         
-        ![image.png](Chapter%207%20Express%20%E1%84%86%E1%85%B5%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20&%20API%20%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8%20%E1%84%90%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5%E1%86%AF%20&%20%201efb57f4596b8064949efe25215e0946/image%203.png)
+        <img width="357" alt="가게 존재 x" src="https://github.com/user-attachments/assets/9c8c8399-c056-427c-a4fd-2b0d8a98e8b0" />
+
         
         > postman 실패 응답
         > 
@@ -242,12 +247,12 @@
         > `mission.controller.js`  파일에 가게 존재 여부를 확인하는 함수 `checkStoreExists` 호출, 에러가 발생한 경우 `next`를 통해 미들웨어로 전달.
         > 
         
-        ![image.png](Chapter%207%20Express%20%E1%84%86%E1%85%B5%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20&%20API%20%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8%20%E1%84%90%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5%E1%86%AF%20&%20%201efb57f4596b8064949efe25215e0946/image%204.png)
+        
         
         > postman 성공 화면
         > 
         
-        ![image.png](Chapter%207%20Express%20%E1%84%86%E1%85%B5%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20&%20API%20%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8%20%E1%84%90%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5%E1%86%AF%20&%20%201efb57f4596b8064949efe25215e0946/image%205.png)
+        
         
         > postman 실패 화면
         > 
@@ -315,12 +320,14 @@
         > `getuserreview.controller.js`  파일에 가게 존재 여부를 확인하는 함수 `checkUserExists` 호출, 에러가 발생한 경우 `next`를 통해 미들웨어로 전달.
         > 
         
-        ![image.png](Chapter%207%20Express%20%E1%84%86%E1%85%B5%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20&%20API%20%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8%20%E1%84%90%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5%E1%86%AF%20&%20%201efb57f4596b8064949efe25215e0946/image%206.png)
+        <img width="610" alt="사용자 리뷰 조회 성공" src="https://github.com/user-attachments/assets/0b658370-f2d1-41af-8bdb-38da7c0f04d6" />
+
         
         > postman 성공 화면
         > 
         
-        ![image.png](Chapter%207%20Express%20%E1%84%86%E1%85%B5%E1%84%83%E1%85%B3%E1%86%AF%E1%84%8B%E1%85%B0%E1%84%8B%E1%85%A5%20&%20API%20%E1%84%8B%E1%85%B3%E1%86%BC%E1%84%83%E1%85%A1%E1%86%B8%20%E1%84%90%E1%85%A9%E1%86%BC%E1%84%8B%E1%85%B5%E1%86%AF%20&%20%201efb57f4596b8064949efe25215e0946/image%207.png)
+        <img width="453" alt="사용자 존재 x" src="https://github.com/user-attachments/assets/72a32db4-730b-41ec-88cd-96ddf3af0fe4" />
+
         
         > postman 실패 화면
         > 
