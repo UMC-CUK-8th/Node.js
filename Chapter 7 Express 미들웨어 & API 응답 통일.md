@@ -71,9 +71,21 @@
 
 ## ☑️ 실습 인증
 
+<aside>
+💡
+
+웹 브라우저, IDE(VSCode 편집기) 및 터미널 이미지(스크린샷), 설명 등을 자유롭게 남겨주세요. 실습을 진행한 과정이 순차적으로 잘 드러나면 가장 좋습니다.
+
+</aside>
+
+> **GitHub 저장소 주소**
+> 
+> 
+> https://github.com/… (자신의 GitHub 저장소 주소를 입력해주세요.)
+> 
 1. 회원 가입 시 에러 처리하기 - API 응답 통일
     
-    <img width="691" alt="API 응답 통일 - 회원가입" src="https://github.com/user-attachments/assets/b9b62979-f421-4e7a-8c26-fc8a88e88664" />
+    <img width="395" alt="회원가입 - 이메일 중복" src="https://github.com/user-attachments/assets/6ff733f0-e657-44c9-bcef-21274117af96" />
 
     
     ```jsx
@@ -96,122 +108,99 @@
 
 - 미션 기록
     
-    > 가게 관련 API의 경우, `store_id`를 URL로 받아 파라미터로 사용했기 때문에 존재 여부에 관한 에러 처리가 필요하다.
+    ```jsx
+    try { //...
+    			res.status(StatusCodes.OK).success({
+          resultType: "SUCCESS",
+          message: null,
+          data: {data},
+        });
+     } catch (error){
+       return next(error);
+    ```
+    
+    > `controller.js` 파일에서 응답을 통일하기 위해 위와 같이 선언하였다. 성공할 경우, 메시지를 반환하고 그렇지 못할 경우, `next` 미들웨어로 전달, `errors.js`에 선언된 함수를 통해 에러 이유를 반환한다.
     > 
     
-    - 가게의 미션 조회 API
+    ```jsx
+    // 이메일 중복
+    export class DuplicateUserEmailError extends Error {
+        errorCode = "U001";
+    
+        constructor(reason, data) {
+            super(reason);
+            this.reason = reason;
+            this.data = data;
+        }
+    }
+    
+    // 가게 존재 x
+    export class DuplicateStoreExist extends Error {
+        errorCode = "S001";
+    
+        constructor(reason, data) {
+            super(reason);
+            this.reason = reason;
+            this.data = data;
+        }
+    }
+    
+    // 사용자 존재 x
+    export class DuplicateUserExist extends Error {
+        errorCode = "U002";
+    
+        constructor(reason, data) {
+            super(reason);
+            this.reason = reason;
+            this.data = data;
+        }
+    }
+    
+    // 리뷰 존재 x
+    export class DuplicateReviewExist extends Error {
+        errorCode = "R001";
+    
+        constructor(reason, data) {
+            super(reason);
+            this.reason = reason;
+            this.data = data;
+        }
+    }
+    
+    // 지역 존재 x
+    export class DuplicateRegionExist extends Error {
+        errorCode = "RE001";
+    
+        constructor(reason, data) {
+            super(reason);
+            this.reason = reason;
+            this.data = data;
+        }
+    }
+    
+    // 미션 존재 x
+    export class DuplicateMissionExist extends Error {
+        errorCode = "M001";
+    
+        constructor(reason, data) {
+            super(reason);
+            this.reason = reason;
+            this.data = data;
+        }
+    }
+    ```
+    
+    > `erros.js` 파일에 에러 판별을 위한 함수들을 선언하였다.
+    > 
+    
+    ---
+    
+    - 가게 관련 API
         
-        에러 1 : 조회하려고 하는 미션을 보유한 가게가 존재하지 않을 경우.
+        > 가게 관련 API의 경우, `store_id`를 URL로 받아 파라미터로 사용했기 때문에 존재 여부에 관한 에러 처리가 필요하다.
+        > 
         
         → URL로 받은 `store_id`가 `store` 테이블에 존재하지 않으면 `FAIL` 응답 반환.
-        
-        ```jsx
-        // 가게가 존재하는지 확인
-        export const checkStoreExists = async (store_id) => {
-            const existingStore = await prisma.store.findMany({
-                where: { store_id }
-            });
-        
-            if (!existingStore.length) {
-                throw new DuplicateStoreExist("존재하지 않는 가게입니다.", { store_id });
-            }
-        
-            return existingStore[0];
-        };
-        ```
-        
-        > `getmission.service.js`  파일에 URL로 받은 `store_id`가 `store`테이블에 존재하는지 확인하고, 존재하지 않으면 오류 응답을 반환하는 함수 `checkStoreExists` 선언
-        > 
-        
-        ```jsx
-        // 가게가 존재하는지 확인
-                try {
-                    const store = await checkStoreExists(storeId);
-                    res.status(StatusCodes.OK).success({
-                        message: "가게 미션 목록 조회 성공",
-                        data: reviews.map(responseFromMission),
-                    });
-                } catch (error) {
-                    return next(error);
-                }
-        ```
-        
-        > `getmission.controller.js`  파일에 가게 존재 여부를 확인하는 함수 `checkStoreExists` 호출, 에러가 발생한 경우 `next`를 통해 미들웨어로 전달.
-        > 
-        
-        <img width="576" alt="가게 미션 조회 성공" src="https://github.com/user-attachments/assets/7013a001-6333-4e90-bcac-6acdb28354ee" />
-
-        
-        > postman 성공 응답
-        > 
-        
-        <img width="357" alt="가게 존재 x" src="https://github.com/user-attachments/assets/fac809a0-47f8-4f17-8c6c-18f01917655b" />
-
-        
-        > postman 실패 응답
-        > 
-        
-    - 가게의 리뷰 조회 API
-        
-        에러 1 : 조회하려고 하는 미션을 보유한 가게가 존재하지 않을 경우.
-        
-        → URL로 받은 `store_id`가 `store` 테이블에 존재하지 않으면 `FAIL` 응답 반환.
-        
-        → 앞서 한 “가게의 미션 조회 API” 에러 처리와 동일한 에러이므로 동일하게 진행했다.
-        
-        ```jsx
-        // 가게가 존재하는지 확인
-        export const checkStoreExists = async (store_id) => {
-            const existingStore = await prisma.store.findMany({
-                where: { store_id }
-            });
-        
-            if (!existingStore.length) {
-                throw new DuplicateStoreExist("존재하지 않는 가게입니다.", { store_id });
-            }
-        
-            return existingStore[0];
-        };
-        ```
-        
-        > `getreview.service.js`  파일에 URL로 받은 `store_id`가 `store`테이블에 존재하는지 확인하고, 존재하지 않으면 오류 응답을 반환하는 함수 `checkStoreExists` 선언
-        > 
-        
-        ```jsx
-        // 가게가 존재하는지 확인
-                        try {
-                            const store = await checkStoreExists(storeId);
-                            res.status(StatusCodes.OK).success({
-                                message: "가게 리뷰 목록 조회 성공",
-                                data: reviews.map(responseFromReview),
-                            });
-                        } catch (error) {
-                            return next(error);
-                        }
-        ```
-        
-        > `getreview.controller.js`  파일에 가게 존재 여부를 확인하는 함수 `checkStoreExists` 호출, 에러가 발생한 경우 `next`를 통해 미들웨어로 전달.
-        > 
-        
-        <img width="648" alt="가게 리뷰 조회 성공" src="https://github.com/user-attachments/assets/f13f102e-73a4-422f-a26f-786d5877f5d4" />
-
-        
-        > postman 성공 응답
-        > 
-        
-        <img width="357" alt="가게 존재 x" src="https://github.com/user-attachments/assets/9c8c8399-c056-427c-a4fd-2b0d8a98e8b0" />
-
-        
-        > postman 실패 응답
-        > 
-        
-    - 가게에 미션 추가 API
-        
-        에러 1 : 추가하려고 하는 미션을 보유한 가게가 존재하지 않을 경우.
-        
-        → URL로 받은 `store_id`가 `store` 테이블에 존재하지 않으면 `FAIL` 응답 반환.
-        
-        → 앞서 한 “가게의 미션 조회 API” 에러 처리와 동일한 에러이므로 동일하게 진행했다.
         
         ```jsx
         // 가게가 존재하는지 확인
@@ -220,116 +209,281 @@
               where: { store_id }
           });
         
-          if (!existingStore.length) {
+          if (!existingStore) {
               throw new DuplicateStoreExist("존재하지 않는 가게입니다.", { store_id });
           }
         
-          return existingStore[0];
+          return existingStore;
         };
         ```
         
-        > `mission.service.js`  파일에 URL로 받은 `store_id`가 `store`테이블에 존재하는지 확인하고, 존재하지 않으면 오류 응답을 반환하는 함수 `checkStoreExists` 선언
+        > `service.s`  파일에 URL로 받은 `store_id`가 `store`테이블에 존재하는지 확인하고, 존재하지 않으면 오류 응답을 반환하는 함수 `checkStoreExists` 선언
         > 
         
         ```jsx
-        // 가게 존재 여부 확인
-              try {
-                  const store = await checkStoreExists(storeId);
-                  res.status(StatusCodes.OK).success({
-                      message: "가게 미션 목록 추가 성공",
-                      data: newMission,
-                  });
-              } catch (error) {
-                  return next(error);
-              }
+        await checkStoreExists(store_id);
         ```
         
-        > `mission.controller.js`  파일에 가게 존재 여부를 확인하는 함수 `checkStoreExists` 호출, 에러가 발생한 경우 `next`를 통해 미들웨어로 전달.
+        > `controller.js` 파일에서 가게가 존재하는지 확인하는 함수 `checkStoreExists` 호출.
         > 
         
-        <img width="453" alt="가게 미션 추가 성공" src="https://github.com/user-attachments/assets/0fd5a667-bc28-4a91-83d8-3642b157d44e" />
+        - postman 화면
+            - 가게 미션 조회 API
+                
+                <img width="592" alt="가게 미션 조회 성공" src="https://github.com/user-attachments/assets/080e6941-ca22-4715-ae8c-22727b2405a1" />
 
-        
-        > postman 성공 화면
-        > 
-        
-        <img width="348" alt="가게 미션 추가 x" src="https://github.com/user-attachments/assets/d8cae116-6c2a-4144-8189-b80ff50ce1dd" />
+                
+                > 성공
+                > 
+                
+                <img width="340" alt="가게 미션 조회 - 가게 x" src="https://github.com/user-attachments/assets/a25742da-819d-4b17-99d9-31a89ea3232b" />
 
+                
+                > 실패
+                > 
+                
+            - 가게 리뷰 조회 API
+                
+                <img width="538" alt="가게 리뷰 조회 성공" src="https://github.com/user-attachments/assets/eb555ccd-c010-44d4-865a-62666e9c9350" />
+
+                
+                > 성공
+                > 
+                
+                <img width="343" alt="가게 리뷰 조회 - 가게 x" src="https://github.com/user-attachments/assets/1af24c84-bd3a-4b10-99be-2df2a1af5e8b" />
+
+                
+                > 실패
+                > 
+                
+            - 가게 미션 추가 API
+                
+                <img width="439" alt="가게 미션 추가 성공" src="https://github.com/user-attachments/assets/e4aa4883-f32f-4daa-957a-dca03b27ef33" />
+
+                
+                > 성공
+                > 
+                
+                <img width="348" alt="가게 미션 추가 - 가게 x" src="https://github.com/user-attachments/assets/697aa4e6-77cc-4c6d-91fd-67984134c50b" />
+
+                
+                > 실패
+                > 
+                
+            - 가게 리뷰 추가 API
+                
+                <img width="536" alt="가게 리뷰 추가 성공" src="https://github.com/user-attachments/assets/41b1ab51-2bae-41f4-b213-51edd0f718e8" />
+
+                
+                > 성공
+                > 
+                
+                <img width="398" alt="가게 리뷰 추가 - 사용자 x" src="https://github.com/user-attachments/assets/caebac08-ac0c-4e1a-a0c2-0ee9f1b897db" />
+
+                
+                > 실패 - 사용자 존재 x
+                > 
+                
+                → 코드는 사용자 관련 API 토글 참조
+                
+                <img width="340" alt="가게 미션 조회 - 가게 x" src="https://github.com/user-attachments/assets/501e1095-1693-4f2b-801d-2f9753a24b54" />
+
+                
+                > 실패 - 가게 존재 x
+                > 
+                
+                → 위 API의 경우, URL로 `store_id`와 `user_id`를 모두 받으므로 두 파라미터가 존재하지 않을 경우 모두를 설정하였다.
+                
         
-        > postman 실패 화면
+    - 사용자 관련 API
+        
+        > 사용자 관련 API의 경우, `user_id`를 URL로 받아 파라미터로 사용했기 때문에 존재 여부에 관한 에러 처리가 필요하다.
         > 
-        
-    
-    > 사용자 관련 API의 경우, `user_id`를 URL로 받아 파라미터로 사용했기 때문에 존재 여부에 관한 에러 처리가 필요하다.
-    > 
-    
-    - 사용자가 작성한 리뷰 조회 API
-        
-        에러 1 : 조회하려고 하는 리뷰를 작성한 사용자가 존재하지 않을 경우.
         
         → URL로 받은 `user_id`가 `user` 테이블에 존재하지 않으면 `FAIL` 응답 반환.
         
-        → 앞서 구현한 API의 에러 처리를 변형하여 적용하였다.
-        
         ```jsx
-        // 사용자 존재 x
-        export class DuplicateUserExist extends Error {
-            errorCode = "U003";
-        
-            constructor(reason, data) {
-                super(reason);
-                this.reason = reason;
-                this.data = data;
-            }
-        }
-        ```
-        
-        > `errors.js` 파일에 사용자가 존재하지 않았을 경우 에러 응답을 표시하는 함수 정의
-        > 
-        
-        ```jsx
-        
-        // 사용자가 존재하는지 확인하는 함수
+        // 가게가 존재하는지 확인
         export const checkUserExists = async (user_id) => {
-            const existingUser = await prisma.user.findMany({
-                where: { user_id }
-            });
+          const existingUser = await prisma.user.findUnique({
+              where: { user_id }
+          });
         
-            if (!existingUser.length) {
-                throw new DuplicateUserExist ("존재하지 않는 사용자입니다.", { user_id });
-            }
+          if (!existingUser) {
+              throw new DuplicateStoreExist("존재하지 않는 사용자입니다.", { User_id });
+          }
         
-            return existingUser[0];
+          return existingUser;
         };
         ```
         
-        > `getuserreview.service.js`  파일에 URL로 받은 `user_id`가 `user`테이블에 존재하는지 확인하고, 존재하지 않으면 오류 응답을 반환하는 함수 `checkUserExists` 선언
+        > `service.s`  파일에 URL로 받은 `user_id`가 `user`테이블에 존재하는지 확인하고, 존재하지 않으면 오류 응답을 반환하는 함수 `checkUserExists` 선언
         > 
         
         ```jsx
-        // 사용자가 존재하는지 확인
-                try {
-                    const user = await checkUserExists(userId);
-                    res.status(StatusCodes.OK).success({
-                        message: "내가 작성한 리뷰 목록 조회 성공",
-                        data: reviews,
-                    });
-                } catch (error) {
-                    return next(error);
-                }
+        await checkuserExists(user_id);
         ```
         
-        > `getuserreview.controller.js`  파일에 가게 존재 여부를 확인하는 함수 `checkUserExists` 호출, 에러가 발생한 경우 `next`를 통해 미들웨어로 전달.
+        > `controller.js` 파일에서 가게가 존재하는지 확인하는 함수 `checkUserExists` 호출.
         > 
         
-        <img width="610" alt="사용자 리뷰 조회 성공" src="https://github.com/user-attachments/assets/0b658370-f2d1-41af-8bdb-38da7c0f04d6" />
+        - postman 화면
+            - 사용자 리뷰 조회 API
+                
+                <img width="610" alt="사용자 리뷰 조회 성공" src="https://github.com/user-attachments/assets/67dfea1a-d863-4404-90cb-2bcfbe9b77e2" />
 
-        
-        > postman 성공 화면
-        > 
-        
-        <img width="453" alt="사용자 존재 x" src="https://github.com/user-attachments/assets/72a32db4-730b-41ec-88cd-96ddf3af0fe4" />
 
+                
+                > 성공
+                > 
+                
+                <img width="351" alt="사용자 리뷰 조회 - 사용자 x" src="https://github.com/user-attachments/assets/dd34c669-d5f1-4bb0-a269-68d8185771c6" />
+
+                
+                > 실패
+                > 
+                
+            - 사용자 도전 중 미션 조회 API
+                
+                <img width="509" alt="미션 조회 성공" src="https://github.com/user-attachments/assets/b118ef37-65f6-4eae-861b-4693ce8791cb" />
+
+                
+                > 성공
+                > 
+                
+                <img width="359" alt="미션 조회 - 사용자 x" src="https://github.com/user-attachments/assets/fc8d86a0-af6a-42bc-9652-0ea738cfdcbb" />
+
+                
+                > 실패
+                > 
+                
+            - 사용자 도전 중 미션 추가 API
+                
+                <img width="395" alt="사용자 미션 추가 성공" src="https://github.com/user-attachments/assets/84f11269-a3b3-4362-a202-b8bcd50c2cac" />
+
+                
+                > 성공
+                > 
+                
+                <img width="363" alt="사용자 미션 추가 - 사용자 x" src="https://github.com/user-attachments/assets/252b9e4d-956c-4583-8d3b-6a22d27f9c0b" />
+
+                
+                > 실패
+                > 
+                
+            - 사용자 미션 상태 업데이트 API
+                
+                <img width="286" alt="미션 상태 업데이트 성공" src="https://github.com/user-attachments/assets/4925cb7a-d7b2-4ade-a297-631c7279a600" />
+
+                
+                > 성공
+                > 
+                
+                <img width="346" alt="미션 상태 업데이트 - 사용자 x" src="https://github.com/user-attachments/assets/1fdbaada-591e-4f14-b02e-5506d486a377" />
+
+                
+                > 실패 - 사용자 x
+                > 
+                
+                <img width="350" alt="미션 상태 업데이트 - 미션 x" src="https://github.com/user-attachments/assets/30c38f24-971f-4702-b48f-b2b52bd06120" />
+
+                
+                > 실패 - 미션 x
+                > 
+                
+                → 위 API의 경우, URL로 `mission_id`와 `user_id`를 모두 받으므로 두 파라미터가 존재하지 않을 경우 모두를 설정하였다.
+                
+    - 지역 관련 API
         
-        > postman 실패 화면
+        > 지역 관련 API의 경우, `region_id`를 URL로 받아 파라미터로 사용했기 때문에 존재 여부에 관한 에러 처리가 필요하다.
         > 
+        
+        → URL로 받은 `region_id`가 `region` 테이블에 존재하지 않으면 `FAIL` 응답 반환.
+        
+        ```jsx
+        // 지역이 존재하는지 확인
+        export const checkRegionExists = async (region_id) => {
+          const existingRegion = await prisma.regiion.findUnique({
+              where: { region_id }
+          });
+        
+          if (!existingRegion) {
+              throw new DuplicateRegionExist("존재하지 않는 지역입니다.", { region_id });
+          }
+        
+          return existingRegion;
+        };
+        ```
+        
+        > `service.s`  파일에 URL로 받은 `region_id`가 r`egion`테이블에 존재하는지 확인하고, 존재하지 않으면 오류 응답을 반환하는 함수 `checkRegionExists` 선언
+        > 
+        
+        ```jsx
+        await checkRegionExists(region_id);
+        ```
+        
+        > `controller.js` 파일에서 가게가 존재하는지 확인하는 함수 `checkRegionExists` 호출.
+        > 
+        
+        - postman 화면
+            - 지역에 가게 추가 API
+                
+                <img width="398" alt="가게 추가 성공" src="https://github.com/user-attachments/assets/537c1c64-7587-44a3-8fe1-b2120434d3c9" />
+
+                
+                > 성공
+                > 
+                
+                <img width="344" alt="가게 추가 - 지역 존재 x" src="https://github.com/user-attachments/assets/4fdff112-5526-4369-94ba-d7afd65c1e29" />
+
+                
+                > 실패
+                > 
+        
+    - 리뷰 관련 API
+        
+        > 리뷰 관련 API의 경우, `review_id`를 URL로 받아 파라미터로 사용했기 때문에 존재 여부에 관한 에러 처리가 필요하다.
+        > 
+        
+        → URL로 받은 `review_id`가 `review` 테이블에 존재하지 않으면 `FAIL` 응답 반환.
+        
+        ```jsx
+        // 리뷰가 존재하는지 확인
+        export const checkReviewExists = async (review_id) => {
+          const existingReview = await prisma.review.findUnique({
+              where: { review_id }
+          });
+        
+          if (!existingReview) {
+              throw new DuplicateReviewExist("존재하지 않는 리뷰입니다.", { Review_id });
+          }
+        
+          return existingReview;
+        };
+        ```
+        
+        > `service.s`  파일에 URL로 받은 `review_id`가 `review`테이블에 존재하는지 확인하고, 존재하지 않으면 오류 응답을 반환하는 함수 `checkReviewExists` 선언
+        > 
+        
+        ```jsx
+        await checkReviewExists(review_id);
+        ```
+        
+        > `controller.js` 파일에서 가게가 존재하는지 확인하는 함수 `checkReviewExists` 호출.
+        > 
+        
+        - postman 화면
+            - 리뷰 이미지 추가 API
+                
+                <img width="501" alt="리뷰 이미지 추가 성공" src="https://github.com/user-attachments/assets/041efc37-20c7-42c8-8cad-25a28cf73e46" />
+
+                
+                > 성공
+                > 
+                
+                <img width="373" alt="리뷰 이미지 추가 - 존재 x" src="https://github.com/user-attachments/assets/a4f0e927-aa98-43e8-82e7-7f26a0e06a68" />
+
+                
+                > 실패
+                > 
+    
