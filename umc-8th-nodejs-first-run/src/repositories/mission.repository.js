@@ -1,22 +1,15 @@
-import { prisma } from "../db.config.js"; // Prisma ORM 사용
+import { prisma } from "../db.config.js";
+import { DuplicateStoreExist } from "../errors.js";
 
-// 가게 조회 (storeId 기반 조회)
-export const findStoreByIdRepository = async (storeId) => {
-  return await prisma.store.findUnique({
-    where: { store_id: storeId }, // `findUnique()`로 데이터 조회
-  });
-};
-
-// 미션 추가 (store_id → region_id 가져온 후 미션 생성)
+// 미션 추가 
 export const addMissionRepository = async (storeId, missionData) => {
-  // `Store`에서 `region_id` 가져오기
   const store = await prisma.store.findUnique({
     where: { store_id: storeId },
-    select: { region_id: true }, // `region_id`만 선택적으로 조회
+    select: { region_id: true },
   });
 
   if (!store) {
-    throw new Error(`Store ID ${storeId} not found.`);
+    throw new DuplicateStoreExist("존재하지 않는 가게입니다.", {storeId});
   }
 
   // `region_id` 포함하여 미션 데이터 삽입

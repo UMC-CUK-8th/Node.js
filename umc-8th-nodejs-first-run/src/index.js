@@ -4,7 +4,7 @@ import express from "express";
 import { handleUserSignUp } from "./controllers/user.controller.js";
 import { handleStoreCreation } from "./controllers/store.controller.js";
 import { addReview } from "./controllers/review.controller.js";
-import { addReviewImage } from "./controllers/reviewimage.controller.js";
+import { addReviewImageHandler } from "./controllers/reviewimage.controller.js";
 import { createMission } from "./controllers/mission.controller.js";
 import { addUserMission, getUserMissions } from "./controllers/usermission.controller.js";
 import { handleListStoreReviews } from "./controllers/getreview.controller.js";
@@ -46,14 +46,14 @@ app.get("/", (req, res) => {
 // 회원 가입 API
 app.post("/api/v1/user/signup", handleUserSignUp);
 // 지역별 가게 정보 추가 API
-app.post("/api/v1/regions/:regionId/stores", handleStoreCreation);
+app.post("/api/v1/regions/:region_id/stores", handleStoreCreation);
 // 리뷰 작성 API
 app.post("/api/v1/review/:store_id/:user_id", addReview);
 // 리뷰에 이미지 추가 API
-app.post("/api/v1/images/review/:review_id", addReviewImage);
+app.post("/api/v1/images/review/:review_id", addReviewImageHandler);
 // 가게에 미션 추가 API
 app.post("/api/v1/mission/:store_id", createMission);
-// 도전 중 미션 확인 API - 커서 페이지네이션 추가
+// 도전 중 미션 조회 API - 커서 페이지네이션 추가
 app.get("/api/v1/user/:user_id/missions", getUserMissions);
 // 도전 중 미션 추가 API 
 app.post("/api/v1/user-mission/:user_id", addUserMission);

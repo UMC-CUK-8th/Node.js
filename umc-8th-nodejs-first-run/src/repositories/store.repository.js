@@ -13,17 +13,6 @@ export const addStoreToDB = async (storeData) => {
       throw new Error("storeName이 올바르게 전달되지 않았습니다.");
     }
 
-    // Region 테이블에서 해당 region_id가 존재하는지 확인
-    const regionExists = await prisma.region.findUnique({
-      where: { region_id: regionId },
-    });
-
-    if (!regionExists) {
-      throw new Error(`region_id ${regionId}가 region 테이블에 존재하지 않습니다.`);
-    }
-
-    console.log("region_id 존재 확인 완료");
-
     // 가게 정보 삽입
     const createdStore = await prisma.store.create({
       data: {
