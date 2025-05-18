@@ -3,6 +3,7 @@ import { createReviewImageDTO } from "../dtos/reviewimage.dto.js";
 import { checkReviewExists } from "../services/reviewimage.service.js";
 import { addReviewImage } from "../services/reviewimage.service.js";
 
+// 리뷰에 이미지 추가
 export const addReviewImageHandler = async (req, res, next) => { 
   try {
     const reviewId = parseInt(req.params.review_id); 

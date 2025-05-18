@@ -3,14 +3,14 @@ import dotenv from "dotenv";
 import express from "express";
 import { handleUserSignUp } from "./controllers/user.controller.js";
 import { handleStoreCreation } from "./controllers/store.controller.js";
-import { addReview } from "./controllers/review.controller.js";
+import { addReview } from "./controllers/store.controller.js";
 import { addReviewImageHandler } from "./controllers/reviewimage.controller.js";
-import { createMission } from "./controllers/mission.controller.js";
-import { addUserMission, getUserMissions } from "./controllers/usermission.controller.js";
-import { handleListStoreReviews } from "./controllers/getreview.controller.js";
-import { handleListUserReviews } from "./controllers/getuserreview.controller.js";
-import { completeUserMission } from "./controllers/usermission.controller.js";
-import { handleListMissions } from "./controllers/getmission.controller.js";
+import { createMission } from "./controllers/store.controller.js";
+import { addUserMission, getUserMissions } from "./controllers/user.controller.js";
+import { handleListStoreReviews } from "./controllers/store.controller.js";
+import { handleListUserReviews } from "./controllers/user.controller.js";
+import { completeUserMission } from "./controllers/user.controller.js";
+import { handleListMissions } from "./controllers/store.controller.js";
 
 dotenv.config();
 

@@ -1,3 +1,4 @@
+// 회원가입
 export const bodyToUser = (body) => {
     return {
       email: body.email,
@@ -30,3 +31,39 @@ export const bodyToUser = (body) => {
     };
   };
   
+// 사용자 리뷰 조회
+export const responseFromReview = (review) => {
+  return {
+      reviewId: review.review_id,
+      reviewContent: review.review_content,
+      reply: review.reply ?? null, 
+      rating: review.rating,
+      createdAt: review.created_at,
+      updatedAt: review.updated_at,
+      userNickname: review.user.nickname,
+      images: review.reviewimages.map(image => ({
+          reviewImageId: image.reviewimage_id,
+          imageUrl: image.image_url,
+      })),
+      store: {
+          storeId: review.store.store_id,
+          name: review.store.store_name,
+      },
+  };
+};
+
+// 사용자 미션 추가
+export const createUserMissionDTO = (data, user_id) => {
+  if (!data.mission_id || !data.region_id) {
+    throw new Error("Missing required fields: mission_id, region_id");
+  }
+
+  return {
+    mission_id: Number(data.mission_id),
+    user_id,
+    region_id: Number(data.region_id),
+    mission_status: "in_progress",
+    start_at: new Date(),
+    completed_at: null,
+  };
+};
