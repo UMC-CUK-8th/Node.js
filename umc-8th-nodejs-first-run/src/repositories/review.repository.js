@@ -1,19 +1,5 @@
 import { prisma } from "../db.config.js"; 
 
-// 가게 조회 (storeId 기반 조회)
-export const findStoreByIdRepository = async (storeId) => {
-  return await prisma.store.findUnique({
-    where: { store_id: storeId },
-  });
-};
-
-// 사용자 조회 (userId 기반 조회)
-export const findUserByIdRepository = async (userId) => {
-  return await prisma.user.findUnique({
-    where: { user_id: userId }, 
-  });
-};
-
 // 리뷰 추가
 export const addReviewRepository = async (storeId, userId, reviewData) => {
   const createdReview = await prisma.review.create({

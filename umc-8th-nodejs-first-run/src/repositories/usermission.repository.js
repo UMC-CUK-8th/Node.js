@@ -22,20 +22,19 @@ export const findUserMissionsRepository = async (userId) => {
   });
 };
 
-//새로운 미션을 `in_progress` 상태로 추가
-export const addUserMissionRepository = async (userMissionData) => {
+// 새로운 미션을 `in_progress` 상태로 추가
+export const addUserMissionRepository = async (userId, userMissionData) => {
+
   const createdMission = await prisma.userMission.create({
     data: {
       mission_id: userMissionData.mission_id,
-      user_id: userMissionData.user_id,
+      user_id: userId,
       region_id: userMissionData.region_id,
-      mission_status: userMissionData.mission_status,
-      start_at: userMissionData.start_at,
-      completed_at: userMissionData.completed_at,
+      mission_status: userMissionData.mission_status || "in_progress",
+      start_at: userMissionData.start_at || new Date(),
+      completed_at: null,
     },
   });
-
-  console.log("새로운 미션 추가 완료", createdMission.user_mission_id);
 
   return createdMission;
 };

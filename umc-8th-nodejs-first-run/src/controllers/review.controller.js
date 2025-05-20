@@ -1,25 +1,41 @@
 import { StatusCodes } from "http-status-codes";
 import { createReviewDTO } from "../dtos/review.dto.js";
 import { addReviewService } from "../services/review.service.js";
+import { checkStoreExists } from "../services/mission.service.js";
+import { checkUserExists } from "../services/getuserreview.service.js";
 
-export const addReview = async (req, res) => {
+export const addReview = async (req, res, next) => {
   try {
-    const { store_id, user_id } = req.params; // ✅ URL에서 store_id와 user_id 가져오기
+    const storeId = parseInt(req.params.store_id); 
+    const userId = parseInt(req.params.user_id); 
+
+    if (isNaN(storeId)) {
+      return next(new Error(`storeId가 유효한 숫자가 아닙니다. 입력값: ${req.params.store_id}`));
+    }
+    if (isNaN(userId)) {
+      return next(new Error(`userId가 유효한 숫자가 아닙니다. 입력값: ${req.params.user_id}`));
+    }
+
     const reviewData = createReviewDTO(req.body); // DTO 변환 및 검증
 
-    console.log("🔹 받은 store_id:", store_id);
-    console.log("🔹 받은 user_id:", user_id);
-    console.log("🔹 받은 reviewData:", reviewData);
+    // 가게 존재 여부 확인
+    await checkStoreExists(storeId);
 
-    const newReview = await addReviewService(store_id, user_id, reviewData); // 서비스 호출
+    // 사용자 존재 여부 확인
+    await checkUserExists(userId);
 
-    res.status(StatusCodes.CREATED).json({
-      message: "Review created successfully",
-      review: newReview,
+    // 리뷰 추가
+    const newReview = await addReviewService(storeId, userId, reviewData);
+
+    // 성공 응답 반환
+    res.status(StatusCodes.OK).success({
+      resultType: "SUCCESS",
+      message: null,
+      success: newReview
     });
+
   } catch (error) {
-    res.status(error.status || StatusCodes.INTERNAL_SERVER_ERROR).json({
-      error: error.message || "Internal Server Error",
-    });
+    console.error("API 요청 오류", error);
+    return next(error);
   }
 };

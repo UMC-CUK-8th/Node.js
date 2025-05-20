@@ -1,10 +1,20 @@
+import { prisma } from "../db.config.js";
 import { getAllStoreReviews } from "../repositories/getreview.repository.js";
+import { DuplicateStoreExist } from "../errors.js";
 
 export const listStoreReview = async (storeId, cursor) => {
-    try {
-        return await getAllStoreReviews(storeId, cursor);
-    } catch (error) {
-        console.error("리뷰 조회 서비스 오류:", error);
-        throw new Error("리뷰 조회 서비스에서 문제가 발생했습니다.");
+    return await getAllStoreReviews(storeId, cursor);
+};
+
+// 가게가 존재하는지 확인
+export const checkStoreExists = async (storeId) => {
+    const existingStore = await prisma.store.findUnique({
+        where: { store_id: storeId }
+    });
+
+    if (!existingStore) {
+        throw new DuplicateStoreExist("존재하지 않는 가게입니다.", { storeId });
     }
+
+    return existingStore;
 };

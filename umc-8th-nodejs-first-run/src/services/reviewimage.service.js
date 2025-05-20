@@ -1,15 +1,24 @@
-import { findReviewByIdRepository, addReviewImageRepository } from "../repositories/reviewimage.repository.js";
+import { prisma } from "../db.config.js";
+import { DuplicateReviewExist } from "../errors.js";
+import { addReviewImageRepository } from "../repositories/reviewimage.repository.js";
 
-export const addReviewImageService = async (reviewId, reviewImageData) => {
-  const review = await findReviewByIdRepository(reviewId);
-  if (!review) {
-    console.error("❌ 해당 review를 찾을 수 없습니다. reviewId:", reviewId); // ✅ 추가
-    throw new Error(`❌ Review ID ${reviewId} not found.`);
-  }
+export const addReviewImage = async (reviewId, reviewImageData) => {
+    // 리뷰 존재 여부 확인
+    await checkReviewExists(reviewId);
 
-  console.log("🔹 가져온 review 데이터:", review); // 확인용
-  console.log("🔹 review_id to insert:", review.review_id); // ✅ 이 줄 추가해서 확인
-
-  return await addReviewImageRepository(review, reviewImageData);
+    // 이미지 추가
+    return await addReviewImageRepository(reviewId, reviewImageData);
 };
 
+// 리뷰 존재 여부 확인 함수
+export const checkReviewExists = async (reviewId) => {
+  const existingReview = await prisma.review.findUnique({
+    where: { review_id: reviewId }
+  });
+
+  if (!existingReview) {
+    throw new DuplicateReviewExist("존재하지 않는 리뷰입니다.", { reviewId });
+  }
+
+  return existingReview;
+};
