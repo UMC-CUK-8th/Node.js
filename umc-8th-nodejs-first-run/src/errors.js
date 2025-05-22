@@ -9,6 +9,17 @@ export class DuplicateUserEmailError extends Error {
     }
 }
 
+// 닉네임 중복
+export class DuplicateUserNickname extends Error {
+    errorCode = "U003";
+
+    constructor(reason, data) {
+        super(reason);
+        this.reason = reason;
+        this.data = data;
+    }
+}
+
 // 가게 존재 x
 export class DuplicateStoreExist extends Error {
     errorCode = "S001";

@@ -15,7 +15,6 @@ export const bodyToUser = (body) => {
       profile_image_url: body.profile_image_url || "",
       is_phone_verified: body.is_phone_verified,
       user_point: body.user_point,
-      preferences: body.preference || [], 
     };
   };
   
@@ -53,14 +52,14 @@ export const responseFromReview = (review) => {
 };
 
 // 사용자 미션 추가
-export const createUserMissionDTO = (data, user_id) => {
+export const createUserMissionDTO = (data, userId) => {
   if (!data.mission_id || !data.region_id) {
     throw new Error("Missing required fields: mission_id, region_id");
   }
 
   return {
     mission_id: Number(data.mission_id),
-    user_id,
+    user_id: userId,
     region_id: Number(data.region_id),
     mission_status: "in_progress",
     start_at: new Date(),
