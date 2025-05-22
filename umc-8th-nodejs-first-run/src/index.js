@@ -1,16 +1,23 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
-import { handleUserSignUp } from "./controllers/user.controller.js";
-import { handleStoreCreation } from "./controllers/store.controller.js";
-import { addReview } from "./controllers/store.controller.js";
-import { addReviewImageHandler } from "./controllers/reviewimage.controller.js";
-import { createMission } from "./controllers/store.controller.js";
-import { addUserMission, getUserMissions } from "./controllers/user.controller.js";
-import { handleListStoreReviews } from "./controllers/store.controller.js";
-import { handleListUserReviews } from "./controllers/user.controller.js";
-import { completeUserMission } from "./controllers/user.controller.js";
-import { handleListMissions } from "./controllers/store.controller.js";
+import { 
+  handleUserSignUp,
+  addUserMission,
+  getUserMissions,
+  handleListUserReviews,
+  completeUserMission
+} from "./controllers/user.controller.js";
+import { 
+  handleStoreCreation,
+  addReview,
+  createMission,
+  handleListStoreReviews,
+  handleListMissions
+ } from "./controllers/store.controller.js";
+import { addReviewImageHandler } from "./controllers/reviewimage.controller.js"; 
+import swaggerAutogen from "swagger-autogen";
+import swaggerUiExpress from "swagger-ui-express";
 
 dotenv.config();
 
@@ -21,6 +28,37 @@ app.use(cors()); // cors 방식 허용
 app.use(express.static("public")); // 정적 파일 접근
 app.use(express.json()); // request의 본문을 json으로 해석할 수 있도록 함 (JSON 형태의 요청 body를 파싱하기 위함)
 app.use(express.urlencoded({ extended: false })); // 단순 객체 문자열 형태로 본문 데이터 해석
+
+app.use(
+  "/docs",
+  swaggerUiExpress.serve,
+  swaggerUiExpress.setup({}, {
+    swaggerOptions: {
+      url: "/openapi.json",
+    },
+  })
+);
+
+app.get("/openapi.json", async (req, res, next) => {
+  // #swagger.ignore = true
+  const options = {
+    openapi: "3.0.0",
+    disableLogs: true,
+    writeOutputFile: false,
+  };
+  const outputFile = "/dev/null"; // 파일 출력은 사용하지 않습니다.
+  const routes = ["./index.js"];
+  const doc = {
+    info: {
+      title: "UMC 8th",
+      description: "UMC 8th Node.js 테스트 프로젝트입니다.",
+    },
+    host: "localhost:3000",
+  };
+
+  const result = await swaggerAutogen(options)(outputFile, routes, doc);
+  res.json(result ? result.data : null);
+});
 
 //공통 응답을 사용할 수 있는 헬퍼 함수 등록
 app.use((req, res, next) => {
@@ -82,4 +120,3 @@ app.use((err, req, res, next) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
-

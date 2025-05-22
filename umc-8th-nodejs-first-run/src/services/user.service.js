@@ -3,7 +3,6 @@ import { responseFromReview } from "../dtos/user.dto.js";
 import { prisma } from "../db.config.js";
 import {
   addUser,
-  getUser,
   getUserPreferencesByUserId,
   setPreference,
   findUserReviewsRepository, 
@@ -16,20 +15,47 @@ import {
   DuplicateUserEmailError,
   DuplicateUserExist,
   DuplicateMissionExist,
+  DuplicateUserNickname,
 } from "../errors.js";
 
 // 사용자 존재 여부 확인
 export const checkUserExists = async (user_id) => {
-  const existingUser = await prisma.user.findMany({
+  const existingUser = await prisma.user.findUnique({
     where: { user_id }
   });
 
-  if (!existingUser.length) {
+  if (!existingUser) {
     throw new DuplicateUserExist("존재하지 않는 사용자입니다.", { user_id });
   }
 
-  return existingUser[0];
+  return existingUser;
 };
+
+// 이메일 중복 확인
+export const checkUserEmailExists = async => {
+  const existingUserEmail = prisma.user.findUnique({
+    where: { email }
+  });
+
+  if (!existingUserEmail) {
+    throw new DuplicateUserEmailError("중복된 이메일입니다.", { email });
+  }
+
+  return existingUserEmail;
+}
+
+// 닉네임 중복 확인
+export const checkUserNicknameExists = async => {
+  const existingUserNickname = prisma.user.findUnique({
+    where: { nickname }
+  });
+
+  if (!existingUserNickname) {
+    throw new DuplicateUserNickname("중복된 닉네임입니다.", { nickname });
+  }
+
+  return existingUserNickname;
+}
 
 // 미션 존재 여부 확인
 export const checkMissionExists = async (missionId) => {
@@ -46,28 +72,34 @@ export const checkMissionExists = async (missionId) => {
 
 // 회원가입
 export const userSignUp = async (data) => {
-  // 1. 사용자 추가 (중복이면 null 반환)
-  const userId = await addUser(data);
+  const preferences = data.preference || [];
+  const userData = { ...data };
+  delete userData.preference;
+
+  const userId = await addUser(userData);
 
   if (!userId) {
     throw new DuplicateUserEmailError("이미 존재하는 이메일입니다.", data);
   }
 
-  // 2. 사용자 선호도 저장 (1개씩 반복)
-  if (data.preferences && data.preferences.length > 0) {
-    for (const preferenceId of data.preferences) {
-      await setPreference(userId, preferenceId);
-    }
+  await checkUserNicknameExists;
+  
+  // 선호도 등록
+  for (const preferenceId of preferences) {
+    await setPreference(userId, preferenceId);
   }
 
-  // 3. 사용자 정보 조회
-  const user = await getUser(userId);
+  const user = await prisma.user.findUnique({
+    where: { user_id: userId },
+    include: {
+      userPreferences: {
+        include: { preference: true },
+      },
+    },
+  });
 
-  // 4. 사용자 선호도 조회
-  const preferences = await getUserPreferencesByUserId(userId);
-
-  // 5. 응답 DTO 가공 후 반환
-  return responseFromUser({ user, preferences });
+  const preferList = await getUserPreferencesByUserId(userId);
+  return responseFromUser({ user, preferences: preferList });
 };
 
 // 사용자 리뷰 조회
