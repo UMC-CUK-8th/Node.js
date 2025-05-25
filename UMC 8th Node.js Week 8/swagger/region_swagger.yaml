@@ -1,0 +1,65 @@
+paths:
+  /regions/{regionId}/stores:
+    post:
+      summary: 특정 지역에 가게 추가 API
+      parameters:
+        - in: path
+          name: regionId
+          required: true
+          schema:
+            type: integer
+          description: 가게가 속할 지역 ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                store_category_id:
+                  type: integer
+                store_name:
+                  type: string
+                store_address:
+                  type: string
+                operating_hours:
+                  type: string
+      responses:
+        "201":
+          description: 가게 생성 성공 응답
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      store_id:
+                        type: integer
+                        example: 10
+                      region_id:
+                        type: integer
+                        example: 1
+                      store_category_id:
+                        type: integer
+                        example: 2
+                      store_name:
+                        type: string
+                        example: "UP TO ME"
+                      store_address:
+                        type: string
+                        example: "서울시 마포구 신림로 165-6"
+                      operating_hours:
+                        type: string
+                        example: "12:00 - 22:00"
+        "400":
+          description: 잘못된 요청 (필수값 누락 등)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "필수값 누락"

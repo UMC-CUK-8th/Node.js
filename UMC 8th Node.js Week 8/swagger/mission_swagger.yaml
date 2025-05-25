@@ -1,0 +1,168 @@
+paths:
+  /stores/{storeId}/missions:
+    post:
+      summary: 가게에 미션 추가 API
+      parameters:
+        - in: path
+          name: storeId
+          required: true
+          schema:
+            type: integer
+          description: 미션을 추가할 가게 ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mission_name:
+                  type: string
+                  example: UP TO ME 방문 인증샷 올리기
+                description:
+                  type: string
+                  example: 매장 방문 후 인증샷을 업로드해주세요. 포인트는 리뷰 확인 후 지급됩니다.
+                reward_point:
+                  type: integer
+                  example: 100
+                due_date:
+                  type: string
+                  format: date-time
+                  example: 2025-06-30T23:59:59.000Z
+      responses:
+        "201":
+          description: 미션 생성 성공 응답
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: SUCCESS
+                  error:
+                    type: object
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      mission_id:
+                        type: integer
+                        example: 42
+                      store_id:
+                        type: integer
+                        example: 5
+                      mission_name:
+                        type: string
+                        example: UP TO ME 방문 인증샷 올리기
+                      description:
+                        type: string
+                        example: 매장 방문 후 인증샷을 업로드해주세요. 포인트는 리뷰 확인 후 지급됩니다.
+                      reward_point:
+                        type: integer
+                        example: 100
+                      due_date:
+                        type: string
+                        format: date-time
+                        example: 2025-06-30T23:59:59.000Z
+        "400":
+          description: 미션 생성 실패 응답
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: FAIL
+                  error:
+                    type: object
+                    properties:
+                      errorCode:
+                        type: string
+                        example: M001
+                      reason:
+                        type: string
+                        example: 미션 생성 중 오류 발생
+                      data:
+                        type: object
+                        example: {}
+                  success:
+                    type: object
+                    nullable: true
+                    example: null
+
+  /missions/{missionId}/challenge:
+    post:
+      summary: 미션 도전하기 API
+      parameters:
+        - in: path
+          name: missionId
+          required: true
+          schema:
+            type: integer
+          description: 도전할 미션의 ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 1
+                store_id:
+                  type: integer
+                  example: 10
+                region_id:
+                  type: integer
+                  example: 5
+                store_name:
+                  type: string
+                  example: "번이학생마라탕"
+                reward_point:
+                  type: integer
+                  example: 500
+                due_date:
+                  type: string
+                  format: date-time
+                  example: "2025-06-01T23:59:59.000Z"
+                category:
+                  type: string
+                  example: "중식"
+      responses:
+        "201":
+          description: 미션 도전 성공 응답
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  resultType:
+                    type: string
+                    example: SUCCESS
+                  error:
+                    type: object
+                    nullable: true
+                    example: null
+                  success:
+                    type: object
+                    properties:
+                      user_id:
+                        type: integer
+                        example: 1
+                      mission_id:
+                        type: integer
+                        example: 7
+                      status:
+                        type: string
+                        example: in_progress
+                      challenged_at:
+                        type: string
+                        format: date-time
+                        example: "2025-05-25T14:30:00.000Z"
+        "400":
+          description: 미션 도전 실패 응답 (예: 중복 도전)
+          content:
