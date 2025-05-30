@@ -96,6 +96,8 @@ app.get(
 
 // 기본 라우트
 app.get("/", (req, res) => {
+  console.log("오잉");
+  console.log(req.user);
   res.send("Hello World!");
 });
 
