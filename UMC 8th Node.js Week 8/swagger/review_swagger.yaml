@@ -1,0 +1,61 @@
+paths:
+  /reviews/{storeId}:
+    post:
+      summary: 가게 리뷰 작성 API
+      parameters:
+        - name: storeId
+          in: path
+          required: true
+          description: 리뷰를 작성할 가게 ID
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                user_id:
+                  type: integer
+                  example: 1
+                review_content:
+                  type: string
+                  example: "맛있고 친절했어요!"
+                rating:
+                  type: integer
+                  example: 5
+                review_image_url:
+                  type: string
+                  example: "https://example.com/review.jpg"
+      responses:
+        "201":
+          description: 리뷰 등록 성공
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  result:
+                    type: object
+                    properties:
+                      review_id:
+                        type: integer
+                      store_id:
+                        type: integer
+                      user_id:
+                        type: integer
+                      review_content:
+                        type: string
+                      rating:
+                        type: string
+                      review_image_url:
+                        type: string
+                      created_at:
+                        type: string
+                      updated_at:
+                        type: string
+        "400":
+          description: 요청 파라미터 오류
+        "500":
+          description: 서버 내부 오류
