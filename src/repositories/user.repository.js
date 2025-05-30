@@ -132,3 +132,10 @@ export const updateUserMissionStatusRepository = async (userId, missionId) => {
   });
 };
 
+// 연동 로그인 시 사용자 정보 추가
+export const updateUserById = async (userId, data) => {
+  return await prisma.user.update({
+    where: { user_id: userId },
+    data,
+  });
+};

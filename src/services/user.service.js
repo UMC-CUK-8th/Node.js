@@ -9,6 +9,7 @@ import {
   findUserMissionsRepository,
   addUserMissionRepository,
   updateUserMissionStatusRepository,
+  updateUserById
 } from "../repositories/user.repository.js";
 
 import {
@@ -32,12 +33,12 @@ export const checkUserExists = async (user_id) => {
 };
 
 // 이메일 중복 확인
-export const checkUserEmailExists = async => {
-  const existingUserEmail = prisma.user.findUnique({
+export const checkUserEmailExists = async (email) => {
+  const existingUserEmail = await prisma.user.findUnique({
     where: { email }
   });
 
-  if (!existingUserEmail) {
+  if (existingUserEmail) {
     throw new DuplicateUserEmailError("중복된 이메일입니다.", { email });
   }
 
@@ -45,17 +46,17 @@ export const checkUserEmailExists = async => {
 }
 
 // 닉네임 중복 확인
-export const checkUserNicknameExists = async => {
-  const existingUserNickname = prisma.user.findUnique({
+export const checkUserNicknameExists = async (nickname) => {
+  const existingUserNickname = await prisma.user.findUnique({
     where: { nickname }
   });
 
-  if (!existingUserNickname) {
+  if (existingUserNickname) {
     throw new DuplicateUserNickname("중복된 닉네임입니다.", { nickname });
   }
 
   return existingUserNickname;
-}
+};
 
 // 미션 존재 여부 확인
 export const checkMissionExists = async (missionId) => {
@@ -72,6 +73,10 @@ export const checkMissionExists = async (missionId) => {
 
 // 회원가입
 export const userSignUp = async (data) => {
+  if (!data.email || !data.nickname) {
+    throw new Error("필수 데이터 누락: email 또는 nickname이 없음");
+  }
+
   const preferences = data.preference || [];
   const userData = { ...data };
   delete userData.preference;
@@ -82,9 +87,8 @@ export const userSignUp = async (data) => {
     throw new DuplicateUserEmailError("이미 존재하는 이메일입니다.", data);
   }
 
-  await checkUserNicknameExists;
-  
-  // 선호도 등록
+  await checkUserNicknameExists(data.nickname);
+
   for (const preferenceId of preferences) {
     await setPreference(userId, preferenceId);
   }
@@ -98,8 +102,7 @@ export const userSignUp = async (data) => {
     },
   });
 
-  const preferList = await getUserPreferencesByUserId(userId);
-  return responseFromUser({ user, preferences: preferList });
+  return responseFromUser({ user, preferences });
 };
 
 // 사용자 리뷰 조회
@@ -131,4 +134,24 @@ export const addUserMissionService = async (userId, userMissionData) => {
 // 미션 상태 업데이트
 export const completeUserMissionService = async (userId, missionId) => {
   return await updateUserMissionStatusRepository(userId, missionId);
+};
+
+// 연동 로그인 시 사용자 정보 추가
+export const updateUserProfile = async (userId, data) => {
+  await checkUserNicknameExists(data.nickname);
+
+  const updated = await updateUserById(userId, {
+    ...data,
+    updated_at: new Date(),
+  });
+
+  return {
+    user_id: updated.user_id,
+    email: updated.email,
+    name: updated.name,
+    nickname: updated.nickname,
+    gender: updated.gender,
+    phone_number: updated.phone_number,
+    birth: updated.birth,
+  };
 };

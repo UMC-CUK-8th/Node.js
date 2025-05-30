@@ -15,6 +15,7 @@ export const bodyToUser = (body) => {
       profile_image_url: body.profile_image_url || "",
       is_phone_verified: body.is_phone_verified,
       user_point: body.user_point,
+      preference: body.preferences || [],
     };
   };
   
@@ -26,7 +27,7 @@ export const bodyToUser = (body) => {
     return {
       email: user.email,
       name: user.name,
-      preferCategoty: preferFoods,
+      preferCategory: preferFoods,
     };
   };
   
@@ -64,5 +65,17 @@ export const createUserMissionDTO = (data, userId) => {
     mission_status: "in_progress",
     start_at: new Date(),
     completed_at: null,
+  };
+};
+
+// 연동 로그인 시 사용자 정보 추가
+export const completeProfileDTO = (body) => {
+  return {
+    nickname: body.nickname,
+    gender: body.gender,
+    birth: new Date(body.birth),
+    address: body.address,
+    phone_number: body.phone_number,
+    is_phone_verified: body.is_phone_verified,
   };
 };

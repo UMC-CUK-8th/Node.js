@@ -18,22 +18,124 @@ import {
 
 // 회원가입
 export const handleUserSignUp = async (req, res, next) => {
-  try{
-    console.log("회원가입을 요청했습니다!");
-    console.log("body:", req.body);
-  
-    await checkUserEmailExists;
+  /* 
+   #swagger.summary = '회원 가입 API';
+   #swagger.requestBody = {
+    required: true,
+    content: {
+      "application/json": {
+        schema: {
+          type: "object",
+          properties: {
+            email: {type: "string"},
+            name: {type: "string"},
+            nickname: {type: "string"},
+            gender: {type: "string", enum: ["female", "male", "none"]},
+            birth: {type: "string"},
+            address: {type: "string"},
+            sns_provider: {type: "string", enum: ["kakao", "naver", "apple", "google"]},
+            sns_id: {type: "string"},
+            status: {type: "string", enum: ["active", "inactive"]},
+            is_phone_verified: {type: "string", enum: ["is", "not"]},
+            user_point: {type: "integer"},
+            preferences: {
+              type: "array",
+              items: {type: "string"}
+            }
+          }
+        }
+      }
+    }
+    #swagger.responses[200] = {
+      description: "회원가입 성공 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: {type: "string", example: "SUCCESS"},
+              error: {type: "object", nullable: true, example: null},
+              success: {
+                type: "object",
+                properties: {
+                  review_id: {type: "integer"},
+                  image_url: {type: "string", format: "uri"},
+                  created_at: {type: "string", format: "date"},
+                  updated_at: {type: "string", format: "date"} }
+                }
+              }
+            }
+          }
+        }
+      }
+      #swagger.responses[400] = {
+      description: "회원가입 실패 - 이메일 중복 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: {type: "string", example: "FAIL"},
+              error: {
+                type: "object",
+                properties: {
+                  errorCode: {type: "string", example: "U001"},
+                  reason: {type: "string"},
+                  data: {type: "object"}
+                }
+              },
+              success: {type: "object", nullable: true, example: null}
+            }
+          }
+        }
+      }
+    }
+      #swagger.responses[404] = {
+      description: "회원가입 실패 - 사용자 존재 x 응답",
+      content: {
+        "application/json": {
+          schema: {
+            type: "object",
+            properties: {
+              resultType: {type: "string", example: "FAIL"},
+              error: {
+                type: "object",
+                properties: {
+                  errorCode: {type: "string", example: "U002"},
+                  reason: {type: "string"},
+                  data: {type: "object"}
+                }
+              },
+              success: {type: "object", nullable: true, example: null}
+            }
+          }
+        }
+      }
+    }
+  */
+    try {
+      console.log("회원가입 요청:", req.body);
+    
+      const { email, nickname } = req.body; // 요청 body에서 값 가져오기
+    
+      if (!email || !nickname) {
+        throw new Error("email 또는 nickname 값이 없습니다");
+      }
 
-    const user = await userSignUp(bodyToUser(req.body));
+      await checkUserEmailExists(email);
+      await checkUserNicknameExists(nickname);
   
-    res.status(StatusCodes.OK).success({
-      resultType: "SUCCESS",
-      message: null,
-      data: user,
-    });
-  }catch (error){
-    return next(error);
-  }
+      const user = await userSignUp(bodyToUser(req.body));
+    
+      res.status(StatusCodes.OK).success({
+        resultType: "SUCCESS",
+        message: null,
+        data: user,
+      });
+    } catch (error) {
+      return next(error);
+    }
+    
 };
 
 // 사용자 리뷰 조회
@@ -379,6 +481,27 @@ export const completeUserMission = async (req, res, next) => {
       resutType: "SUCCESS",
       message: null,
       data: updatedMission,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+// 연동 로그인 시 사용자 정보 추가
+export const completeUserProfile = async (req, res, next) => {
+  try {
+    const userId = req.user?.id; // Passport 인증된 사용자 ID
+    
+    await checkUserExists(userId);
+
+    const userData = completeProfileDTO(req.body);
+
+    const updatedUser = await updateUserProfile(userId, userData);
+
+    return res.status(StatusCodes.OK).success({
+      resultType: "SUCCESS",
+      message: null,
+      data: updatedUser,
     });
   } catch (error) {
     return next(error);
