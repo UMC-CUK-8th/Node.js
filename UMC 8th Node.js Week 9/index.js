@@ -6,6 +6,7 @@ import session from "express-session";
 import passport from "passport";
 import { googleStrategy } from "./auth.config.js";
 import { kakaoStrategy } from "./auth.config.js";
+import { localStrategy } from './auth.config.js';
 import { prisma } from "./db.config.js";
 import { setupSwagger } from "../swagger/swagger.config.js";
 import { handleUserSignUp } from "./controllers/user_controller.js";
@@ -45,6 +46,7 @@ app.use(passport.session());
 
 passport.use(googleStrategy); //로그인 방식 등록 (Google)
 passport.use(kakaoStrategy); // 로그인 방식 등록 (Kakao)
+passport.use(localStrategy); // 로그인 방식 등록 (Local)
 
 passport.serializeUser((user, done) => done(null, user)); // Session에 사용자 정보 저장
 passport.deserializeUser((user, done) => done(null, user)); // Session에서 사용자 정보 조회 (가져옴)
@@ -64,7 +66,12 @@ app.get(
   (req, res) => res.redirect("/")
 );
 
-app.get("/oauth2/login/kakao", passport.authenticate("kakao"));
+app.get(
+  "/oauth2/login/kakao",
+  passport.authenticate("kakao", {
+    scope: ["account_email", "profile_nickname"],
+  })
+);
 app.get(
   "/oauth2/callback/kakao",
   passport.authenticate("kakao", {
@@ -73,6 +80,21 @@ app.get(
   }),
   (req, res) => res.redirect("/")
 );
+
+app.post(
+  "/auth/login",
+  passport.authenticate("local", {
+    failureRedirect: "/auth/login-fail",
+    failureMessage: true,
+  }),
+  (req, res) => {
+    res.redirect("/"); // 로그인 성공 후 리다이렉트
+  }
+);
+
+app.get("/auth/login-fail", (req, res) => {
+  res.status(401).json({ message: "로그인 실패" });
+});
 
 setupSwagger(app); // docs 경로에 Swagger UI 연결
 
