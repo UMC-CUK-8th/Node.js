@@ -46,16 +46,19 @@ export const checkUserEmailExists = async (email) => {
 }
 
 // 닉네임 중복 확인
-export const checkUserNicknameExists = async (nickname) => {
-  const existingUserNickname = await prisma.user.findUnique({
-    where: { nickname }
+export const checkUserNicknameExists = async (nickname, excludeUserId = null) => {
+  const existing = await prisma.user.findFirst({
+    where: {
+      nickname,
+      NOT: excludeUserId ? { user_id: excludeUserId } : undefined // 자기 자신의 닉네임 제외
+    }
   });
 
-  if (existingUserNickname) {
-    throw new DuplicateUserNickname("중복된 닉네임입니다.", { nickname });
+  if (existing) {
+    const error = new Error("이미 존재하는 닉네임입니다.");
+    error.errorCode = "nickname.duplicated";
+    throw error;
   }
-
-  return existingUserNickname;
 };
 
 // 미션 존재 여부 확인
@@ -136,8 +139,9 @@ export const completeUserMissionService = async (userId, missionId) => {
   return await updateUserMissionStatusRepository(userId, missionId);
 };
 
-// 연동 로그인 시 사용자 정보 추가
+// 사용자 정보 추가
 export const updateUserProfile = async (userId, data) => {
+
   await checkUserNicknameExists(data.nickname);
 
   const updated = await updateUserById(userId, {
@@ -146,12 +150,11 @@ export const updateUserProfile = async (userId, data) => {
   });
 
   return {
-    user_id: updated.user_id,
-    email: updated.email,
-    name: updated.name,
     nickname: updated.nickname,
     gender: updated.gender,
     phone_number: updated.phone_number,
     birth: updated.birth,
+    address: updated.address,
+    is_phone_verified: updated.is_phone_verified,
   };
 };
