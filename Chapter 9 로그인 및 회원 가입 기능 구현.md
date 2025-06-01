@@ -50,7 +50,8 @@
 
 1. Google 연동 로그인 및 회원가입 기능 구현하기
 
-/Users/kimminji/Desktop/UMC/Chapter/#9/session db.png
+<img width="986" alt="session db" src="https://github.com/user-attachments/assets/21c23b68-eba7-4d8b-8ac4-9d25a6539bb4" />
+
 
 > session 테이블에 값이 잘 저장되었다.
 > 
@@ -94,11 +95,13 @@
     - Naver 로그인 연동 구현
         1. Naver Developer를 이용하여 client 추가
         
-        ![alt text](<naver client-1.png>)
+        <img width="942" alt="naver client" src="https://github.com/user-attachments/assets/e1509905-39f6-4e65-9814-24bfeddd21c6" />
+
         
         2. API 설정
         
-        ![alt text](<naver API 설정.png>)
+        <img width="544" alt="naver API 설정" src="https://github.com/user-attachments/assets/e1b8fe4f-798e-4077-bf55-bf5e563eb7c5" />
+
         
         3. Passport 라이브러리 다운로드
         
@@ -183,12 +186,14 @@
         
         5. session / user 테이블에 값이 잘 저장되는지 확인.
         
-        ![alt text](session.png)
+        <img width="755" alt="session" src="https://github.com/user-attachments/assets/b2e59d4f-7c40-49d7-990f-8da1cf34bdef" />
+
         
         > data에 사용자 정보가 함께 저장되었다.
         > 
         
-        ![alt text](<user .png>)
+        <img width="973" alt="user " src="https://github.com/user-attachments/assets/a1b73573-9b8d-4c4f-b43d-5e04b8bb9d32" />
+
         
         > user 테이블에 google / naver 로그인을 통해 회원가입한 사용자의 정보가 저장되었다.
         > 
@@ -349,22 +354,26 @@
         
         `user.repository.js`
         
-        ![alt text](성공화면.png)
+        <img width="392" alt="성공화면" src="https://github.com/user-attachments/assets/27749706-6bd7-4918-9560-c42cfe8c8b48" />
+
         
         > 정보 추가 성공 화면
         > 
         
-        ![alt text](<사용자 존재 x.png>)
+        <img width="453" alt="사용자 존재 x" src="https://github.com/user-attachments/assets/07072979-1c90-47d0-ad52-bf951ccfd39c" />
+
         
         > 사용자 존재 x 오류 메세지
         > 
         
-        ![alt text](실패화면.png)
+        <img width="314" alt="실패화면" src="https://github.com/user-attachments/assets/ff84102c-1d1a-4ba8-9f86-f9335d5cd6ef" />
+
         
         > 닉네임 중복 오류 메세지
         > 
         
-        ![alt text](<user db.png>)
+        <img width="986" alt="user db" src="https://github.com/user-attachments/assets/da6924c6-2e40-44ea-83a7-0ad0f2415c19" />
+
         
         > 추가 정보가 `user` 테이블에 잘 저장되었다.
         > 
@@ -375,7 +384,8 @@
     
     **`이슈`**
     
-    ![alt text](<issue 1_problem.png>)
+    <img width="789" alt="issue 1_problem" src="https://github.com/user-attachments/assets/3c1a4529-fadd-47f6-aecd-9e1dbd560cb9" />
+
     
     👉 url에서 화면과 같은 error message가 출력되었다.
     
@@ -406,7 +416,8 @@
     
     👉  `index.js` 파일의 순서를 재배치하여 해결하였고 로그인 화면으로 전환되었다.
     
-    ![alt text](<issue 1_solv.png>)
+    <img width="1100" alt="issue 1_solv" src="https://github.com/user-attachments/assets/89ba7905-ff56-4aac-9994-5ca713307cce" />
+
     
     **`참고 레퍼런스`**
     
