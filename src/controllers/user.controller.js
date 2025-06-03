@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { 
   bodyToUser,
   createUserMissionDTO,
+  completeProfileDTO
  } from "../dtos/user.dto.js";
 
 import { 
@@ -14,6 +15,7 @@ import {
   listUserReviewsService,
   checkUserEmailExists,
   checkUserNicknameExists,
+  updateUserProfile
 } from "../services/user.service.js";
 
 // 회원가입
@@ -411,7 +413,7 @@ export const addUserMission = async (req, res, next) => {
 // 미션 상태를 완료로 업데이트
 export const completeUserMission = async (req, res, next) => {
 /* 
-   #swagger.summary = '사용자 미션 조회 API';
+   #swagger.summary = '사용자 미션 상태 업데이트 API';
    #swagger.parameters['user_id'] = {
       description: "조회할 사용자의 ID",
       required: true,
@@ -437,7 +439,7 @@ export const completeUserMission = async (req, res, next) => {
       }
     }
   }
-   #swagger.responses[404] = {
+   #swagger.responses[406] = {
      description: "사용자 미션 상태 업데이트 실패 응답",
      content: {
        "application/json": {
@@ -487,10 +489,76 @@ export const completeUserMission = async (req, res, next) => {
   }
 };
 
-// 연동 로그인 시 사용자 정보 추가
+// 사용자 정보 추가
 export const completeUserProfile = async (req, res, next) => {
+  /* 
+   #swagger.summary = '사용자 정보 추가 API';
+   #swagger.parameters['user_id'] = {
+      description: "조회할 사용자의 ID",
+      required: true,
+      type: "integer",
+      in: "path"
+   }
+   #swagger.responses[200] = {
+     description: "사용자 정보 추가 성공 응답",
+     content: {
+       "application/json": {
+         schema: {
+           type: "object",
+           properties: {
+             count: {type: "integer"}
+          }
+        }
+      }
+    }
+  }
+   #swagger.responses[404] = {
+     description: "사용자 정보 추가 실패 응답 - 사용자 존재 x",
+     content: {
+       "application/json": {
+         schema: {
+           type: "object",
+           properties: {
+             resultType: {type: "string", example: "FAIL"},
+             error: {
+               type: "object",
+               properties: {
+                 errorCode: {type: "string", example: "U002"},
+                 reason: {type: "string"},
+                 data: {type: "object"}
+               }
+             },
+             success: {type: "object", nullable: true, example: null}
+           }
+         }
+       }
+     }
+   }
+     #swagger.responses[405] = {
+     description: "사용자 정보 추가 실패 응답 - 닉네임 중복",
+     content: {
+       "application/json": {
+         schema: {
+           type: "object",
+           properties: {
+             resultType: {type: "string", example: "FAIL"},
+             error: {
+               type: "object",
+               properties: {
+                 errorCode: {type: "string", example: "U003"},
+                 reason: {type: "string"},
+                 data: {type: "object"}
+               }
+             },
+             success: {type: "object", nullable: true, example: null}
+           }
+         }
+       }
+     }
+   }
+*/
   try {
-    const userId = req.user?.id; // Passport 인증된 사용자 ID
+    const userId = parseInt(req.params.user_id); 
     
     await checkUserExists(userId);
 

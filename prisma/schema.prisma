@@ -1,0 +1,237 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id           Int       @id @default(autoincrement()) 
+  name              String    @db.VarChar(100)
+  gender            Ugender   
+  birth             DateTime  
+  address           String    
+  email             String    @unique @db.VarChar(255)
+  phone_number      String?   @db.VarChar(15)
+  is_phone_verified Uverified @default(not)
+  sns_provider      Usnsid    
+  sns_id            String    @db.VarChar(255)
+  profile_image_url String?    
+  status            Ustatus   @default(active)
+  inactive_date     DateTime?
+  user_point        Int       @default(0)      
+  nickname          String    @db.VarChar(100) @unique
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+  
+  userPreferences   UserPreference[]
+  userMissions      UserMission[] 
+  review            Review[]
+  qna               QnA[]
+  useragreements    UserAgreement[]
+
+  @@map("user")
+}
+
+model UserPreference {
+  user_preference_id Int  @id @default(autoincrement()) 
+  user               User @relation(fields: [user_id], references: [user_id])
+  user_id            Int  
+  preference         Preference @relation(fields: [preference_id], references: [preference_id])
+  preference_id      Int
+
+  @@map("User_preference")
+}
+
+model Preference {
+  preference_id     Int    @id @default(autoincrement()) 
+  preference_name   String @db.VarChar(50) @unique
+  userPreferences   UserPreference[]
+
+  @@map("Preference")
+}
+
+model Mission {
+  mission_id        Int    @id @default(autoincrement())
+  mission_content   String
+  store_id          Int 
+  region_id         Int
+  reward_point      Int @default(0)
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  store             Store @relation(fields: [store_id], references: [store_id])
+  region            Region @relation(fields: [region_id], references: [region_id])
+  userMissions      UserMission[]
+
+  @@map("Mission")
+}
+
+model UserMission {
+  user_mission_id Int @id @default(autoincrement())
+  user            User @relation(fields: [user_id], references: [user_id])
+  user_id         Int
+  region_id       Int
+  region          Region @relation(fields: [region_id], references: [region_id])
+  mission         Mission @relation(fields: [mission_id], references: [mission_id])
+  mission_id      Int
+  mission_status  String
+  start_at        DateTime @default(now())
+  completed_at    DateTime?
+
+  @@map("User_mission")
+}
+
+model Store {
+  store_id        Int @id @default(autoincrement())
+  region          Region @relation(fields: [region_id], references: [region_id])
+  region_id       Int
+  store_name      String  @db.VarChar(100)
+  store_image_url String?
+  opening_hours   String @db.VarChar(255)
+  open_status     String @db.VarChar(2)
+  location        String
+  cuisine         String @db.VarChar(100)
+  average_rating  Decimal @db.Decimal(2,1)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  review          Review[]
+  missions        Mission[]
+
+  @@map("Store")
+}
+
+model Review {
+  review_id       Int @id @default(autoincrement())
+  store_id        Int
+  store           Store @relation(fields: [store_id], references: [store_id])
+  user_id         Int
+  user            User @relation(fields: [user_id], references: [user_id])
+  review_content  String
+  reply           String?
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+  rating          Decimal @db.Decimal(2,1)
+
+  reviewimages    ReviewImage[]
+
+  @@map("Review")
+}
+
+model ReviewImage {
+  reviewimage_id    Int @id @default(autoincrement())
+  review_id         Int
+  review            Review @relation(fields: [review_id], references: [review_id])
+  image_url         String
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("Review_image")
+}
+
+model Region {
+  region_id         Int @id @default(autoincrement())
+  region_name       String @db.VarChar(100)
+
+  stores            Store[]
+  userMissions      UserMission[]
+  missions          Mission[]   
+
+  @@map("Region")
+}
+
+model QnA {
+  qna_id            Int @id @default(autoincrement())
+  user_id           Int
+  user              User @relation(fields: [user_id], references: [user_id])
+  qna_title         String @db.VarChar(255)
+  qna_content       String
+  qna_status        String @db.VarChar(30)
+  type              QnAtype
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  qnaimages         QnAImage[]
+
+  @@map("QnA")
+}
+
+model QnAImage {
+  qnaimage_id       Int @id @default(autoincrement())
+  qna_id            Int
+  qna               QnA @relation(fields: [qna_id], references: [qna_id])
+  image_url         String
+
+  @@map("QnA_image")
+}
+
+model UserAgreement {
+  agreement_id      Int @id @default(autoincrement())
+  user_id           Int
+  user              User @relation(fields: [user_id], references: [user_id])
+  term_id           Int
+  term              Terms @relation(fields: [term_id], references: [term_id])
+  is_agreed         UAgreement
+  created_at        DateTime @default(now())
+  updated_at        DateTime @updatedAt
+
+  @@map("User_agreement")
+}
+
+model Terms {
+  term_id           Int @id @default(autoincrement())
+  term_name         String @db.VarChar(255)
+  term_content      String
+  created_at        DateTime  @default(now())
+  updated_at        DateTime  @updatedAt
+
+  useragreements    UserAgreement[]
+
+  @@map("Terms")
+}
+
+model Session {
+  id            String   @id
+  sid           String   @unique
+  data          String   @db.VarChar(512)
+  expiresAt     DateTime @map("expires_at")
+
+  @@map("session")
+}
+
+enum Ugender {
+  male
+  female
+  none
+}
+
+enum Uverified {
+  is
+  not
+}
+
+enum Usnsid {
+  kakao
+  naver
+  apple
+  google
+}
+
+enum Ustatus {
+  active
+  inactive
+}
+
+enum QnAtype {
+  type1
+  type2
+  type3
+}
+
+enum UAgreement {
+  is
+  not
+}

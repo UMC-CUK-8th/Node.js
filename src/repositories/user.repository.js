@@ -136,6 +136,6 @@ export const updateUserMissionStatusRepository = async (userId, missionId) => {
 export const updateUserById = async (userId, data) => {
   return await prisma.user.update({
     where: { user_id: userId },
-    data,
+    data
   });
 };
