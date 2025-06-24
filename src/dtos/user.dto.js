@@ -4,7 +4,7 @@ export const bodyToUser = (body) => {
       email: body.email,
       name: body.name,
       nickname: body.nickname,
-      gender: body.gender,
+      gender: ["male", "female"].includes(body.gender) ? body.gender : "none",
       birth: new Date(body.birth),
       address: body.address || "",
       phone_number: body.phone_number, 
@@ -68,7 +68,7 @@ export const createUserMissionDTO = (data, userId) => {
   };
 };
 
-// 연동 로그인 시 사용자 정보 추가
+// 사용자 정보 추가
 export const completeProfileDTO = (body) => {
   return {
     nickname: body.nickname,

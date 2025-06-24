@@ -22,7 +22,7 @@ import swaggerUiExpress from "swagger-ui-express";
 import { PrismaSessionStore } from "@quixo3/prisma-session-store";
 import session from "express-session";
 import passport from "passport";
-import { googleStrategy } from "./auth.config.js";
+import { googleStrategy, naverStrategy } from "./auth.config.js";
 import { prisma } from "./db.config.js";
 
 // ENV 설정
@@ -57,6 +57,7 @@ app.use((req, res, next) => {
 
 // Passport 설정
 passport.use(googleStrategy); // passport 라이브러리에 정의한 로그인 방식
+passport.use(naverStrategy); 
 // Session에 사용자 정보를 저장할 때, 정보를 가져올 때
 passport.serializeUser((user, done) => done(null, user)); 
 passport.deserializeUser((user, done) => done(null, user));
@@ -94,8 +95,22 @@ app.get(
   }
 );
 
+// OAuth Naver 로그인 라우트
+app.get("/oauth2/login/naver", passport.authenticate("naver"));
+app.get(
+  "/oauth2/callback/naver",
+  passport.authenticate("naver", {
+    failureRedirect: "/oauth2/login/naver",
+    failureMessage: true,
+  }),
+  (req, res) => {
+    return res.redirect("/");
+  }
+);
+
 // 기본 라우트
 app.get("/", (req, res) => {
+  console.log(req.user);
   res.send("Hello World!");
 });
 
@@ -166,7 +181,7 @@ app.get("/api/v1/stores/:store_id/missions", handleListMissions);
 app.put("/api/v1/update/:user_id/:mission_id/user-mission", completeUserMission);
 
 // google 연동 로그인한 사용자가 추가 정보 입력
-app.post("/api/v1/add/complete/profile", completeUserProfile);
+app.put("/api/v1/add/complete/profile/:user_id", completeUserProfile);
 
 // ------------------- 전역 에러 핸들러 -------------------
 app.use((err, req, res, next) => {
